@@ -1,0 +1,17 @@
+.env
+.env.*
+!.env.example
+node_modules/
+.DS_Store
+.mcp.json
+.codex/
+.claude/
+.agents/
+.cache/
+videos/*
+!videos/.gitkeep
+brand/assets/*
+!brand/assets/.gitkeep
+dist/
+!tools/kie-mcp/dist/
+!tools/kie-mcp/dist/index.js
