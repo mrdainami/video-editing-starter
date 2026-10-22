@@ -1,0 +1,68 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"h1","type":"string","label":"Heading (serif)","default":"focus on"},
+  {"id":"h2","type":"string","label":"Heading (selected)","default":"a few things"},
+  {"id":"items","type":"string","label":"3 focus items ; separated","default":"OUTCOME;PROBLEM;WHAT MATTERS"},
+  {"id":"noise","type":"string","label":"Background noise tiles ; separated","default":"new tool;hack;trend;plugin;update;prompt pack;new model;thread;course;agent;beta;launch"},
+  {"id":"lockAt","type":"number","label":"When the focus locks on (s, local)","default":0.7},
+  {"id":"bg","type":"color","label":"Background","default":"#f2f2f0"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · few-things · TAKEOVER. A blurry pile of noise (tools, hacks, trends); camera focus brackets lock onto 3 sharp cards. Length ~1.5s. All content above y 880 (captions). -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vf-bg { position: absolute; inset: 0; }
+        .vf-h { position: absolute; top: 100px; left: 0; right: 0; text-align: center; font-size: 96px; color: var(--vibe-ink); white-space: nowrap; z-index: 3; }
+        .vf-n { position: absolute; left: 0; top: 0; padding: 18px 28px; border-radius: 16px; background: #fff; color: rgba(17,17,17,.6); font: 800 34px "VibeTight"; box-shadow: 0 8px 20px rgba(0,0,0,.08); white-space: nowrap; }
+        .vf-card { position: absolute; top: 430px; width: 420px; height: 260px; border-radius: 26px; background: #fff; box-shadow: 0 18px 40px rgba(0,0,0,.16); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 2; }
+        .vf-num { font: 700 34px "VibePixel"; color: var(--vibe-coral-deep); margin-bottom: 12px; }
+        .vf-t { font: 400 46px "VibeHeavy"; color: var(--vibe-ink); letter-spacing: -0.02em; text-align: center; line-height: 1.05; padding: 0 20px; }
+        .vf-br { position: absolute; inset: -26px; z-index: 3; }
+        .vf-br i { position: absolute; width: 54px; height: 54px; border-color: var(--vibe-coral); border-style: solid; border-width: 0; }
+        .vf-br .a { left: 0; top: 0; border-left-width: 9px; border-top-width: 9px; border-top-left-radius: 14px; }
+        .vf-br .b { right: 0; top: 0; border-right-width: 9px; border-top-width: 9px; border-top-right-radius: 14px; }
+        .vf-br .c { left: 0; bottom: 0; border-left-width: 9px; border-bottom-width: 9px; border-bottom-left-radius: 14px; }
+        .vf-br .d { right: 0; bottom: 0; border-right-width: 9px; border-bottom-width: 9px; border-bottom-right-radius: 14px; }
+      </style>
+      <div id="root" data-composition-id="vibe-few-things" data-width="1920" data-height="1080">
+        <div class="vf-bg"></div>
+        <div class="vf-h"><span class="v-serif vf-1"></span> <span class="v-sel v-tight"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vf-2"></span></span></div>
+        <audio id="vf-c1" src="assets/vibe/sfx/click-soft.wav" data-start="0.6" data-duration="0.37" data-volume="0.9"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-few-things"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host;
+          const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+          $(".vf-bg").style.background = v.bg; $(".vf-1").textContent = v.h1; $(".vf-2").textContent = v.h2;
+          // noise tiles scattered around the middle band (y 270-840)
+          const spots = [[150,300],[560,280],[1250,290],[1580,320],[110,560],[1640,540],[220,780],[640,800],[1100,790],[1500,770],[820,300],[960,820]];
+          const noise = v.noise.split(";").map((t, k) => { const d = document.createElement("div"); d.className = "vf-n"; d.textContent = t; root.appendChild(d); const [x, y] = spots[k % spots.length]; gsap.set(d, { x, y, rotation: (k % 3 - 1) * 6 }); return d; });
+          const xs = [250, 750, 1250];
+          const cards = v.items.split(";").slice(0, 3).map((t, k) => {
+            const c = document.createElement("div"); c.className = "vf-card"; c.style.left = xs[k] + "px";
+            c.innerHTML = '<div class="vf-num">0' + (k + 1) + '</div><div class="vf-t"></div><div class="vf-br"><i class="a"></i><i class="b"></i><i class="c"></i><i class="d"></i></div>';
+            c.querySelector(".vf-t").textContent = t; root.appendChild(c); return c;
+          });
+          const T = v.lockAt;
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($$(".vf-h > *"), { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(1.6)", stagger: 0.07 }, 0.02)
+            .fromTo($(".v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power3.out" }, T - 0.1)
+            .fromTo(noise, { scale: 0.6, opacity: 0, filter: "blur(0px)" }, { scale: 1, opacity: 1, duration: 0.25, ease: "back.out(2)", stagger: 0.02 }, 0.02)
+            .fromTo(cards, { scale: 0.85, opacity: 0.55, filter: "blur(10px)" }, { scale: 0.92, opacity: 0.7, duration: 0.25, ease: "power2.out", immediateRender: true }, 0.1)
+            .to(noise, { filter: "blur(7px)", opacity: 0.35, scale: 0.92, duration: 0.3, ease: "power2.out" }, T - 0.1);
+          cards.forEach((c, k) => {
+            const t = T - 0.1 + k * 0.12;
+            tl.to(c, { scale: 1, opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "back.out(2)" }, t)
+              .fromTo(c.querySelector(".vf-br"), { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.22, ease: "power4.out" }, t + 0.04);
+          });
+          window.__timelines["vibe-few-things"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

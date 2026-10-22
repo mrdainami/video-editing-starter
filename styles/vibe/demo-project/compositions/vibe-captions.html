@@ -1,0 +1,81 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"words","type":"string","label":"Word timings JSON: [{\"t\":\"word\",\"s\":0.0,\"e\":0.3},...] (from hyperframes transcribe), times relative to this layer","default":"[{\"t\":\"Three\",\"s\":0.2,\"e\":0.5},{\"t\":\"words\",\"s\":0.5,\"e\":0.8},{\"t\":\"each\",\"s\":0.8,\"e\":1.1}]"},
+  {"id":"per","type":"number","label":"Words per caption","default":3},
+  {"id":"bottom","type":"number","label":"Bottom (px)","default":64},
+  {"id":"size","type":"number","label":"Size (px)","default":60}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · captions · WITH ME (whole video). 3 words at a time in a paper pill, mixed fonts, key word (longest) gets the coral selection, each word lights up as it is spoken. No sound. -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; pointer-events: none; }
+        .vcc { position: absolute; left: 0; right: 0; display: flex; justify-content: center; }
+        .vcc-pill { display: inline-flex; align-items: baseline; gap: 18px; background: rgba(242,242,240,.96); color: var(--vibe-ink); border-radius: 20px; padding: 14px 30px 18px; box-shadow: 0 12px 34px rgba(0,0,0,.22); line-height: 1.1; white-space: nowrap; }
+        .vcc-w { display: inline-block; }
+        .vcc-w.f0 { font-family: "VibeHeavy"; letter-spacing: -0.02em; }
+        .vcc-w.f1 { font-family: "VibeSerif"; font-style: italic; font-size: 1.14em; }
+        .vcc-w.f2 { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.03em; }
+        .vcc-w.v-sel { padding: 0 8px; }
+      </style>
+      <div id="root" data-composition-id="vibe-captions" data-width="1920" data-height="1080"></div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-captions"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const W = typeof v.words === "string" ? JSON.parse(v.words) : v.words;
+          const chunks = []; for (let i = 0; i < W.length; i += v.per) chunks.push(W.slice(i, i + v.per));
+          const tl = gsap.timeline({ paused: true });
+          const len = (t) => t.replace(/[^A-Za-z0-9]/g, "").length;
+          chunks.forEach((c, ci) => {
+            const row = document.createElement("div"); row.className = "vcc"; row.style.bottom = v.bottom + "px";
+            const pill = document.createElement("div"); pill.className = "vcc-pill"; pill.style.fontSize = v.size + "px"; row.appendChild(pill);
+            let key = 0; c.forEach((w, i) => { if (len(w.t) > len(c[key].t)) key = i; });
+            const spans = c.map((w, i) => {
+              const s = document.createElement("span"); s.className = "vcc-w f" + ((ci + i) % 3) + (i === key ? " v-sel" : "");
+              if (i === key) { const b = document.createElement("span"); b.className = "v-box"; const hl = document.createElement("span"); hl.className = "v-h l"; const hr = document.createElement("span"); hr.className = "v-h r"; s.append(b, hl, hr); }
+              s.append(w.t); pill.appendChild(s); return s;
+            });
+            root.appendChild(row);
+            const start = c[0].s, next = ci + 1 < chunks.length ? chunks[ci + 1][0].s : c[c.length - 1].e + 0.6;
+            const end = Math.min(next, c[c.length - 1].e + 0.6);
+            tl.set(row, { opacity: 0 }, 0).set(row, { opacity: 1 }, start)
+              .fromTo(pill, { y: 26, scale: 0.92 }, { y: 0, scale: 1, duration: 0.18, ease: "back.out(2)" }, start);
+            c.forEach((w, i) => tl.fromTo(spans[i], { opacity: 0.28 }, { opacity: 1, duration: 0.1 }, Math.max(start, w.s)));
+            const box = pill.querySelector(".v-box"); if (box) tl.fromTo(box, { scaleX: 0 }, { scaleX: 1, duration: 0.18, ease: "power3.out" }, start + 0.05);
+            tl.set(row, { opacity: 0 }, end);
+          });
+          window.__timelines["vibe-captions"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

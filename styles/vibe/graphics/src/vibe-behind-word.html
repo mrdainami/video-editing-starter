@@ -1,0 +1,39 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"word","type":"string","label":"Word behind you","default":"STYLE"},
+  {"id":"size","type":"number","label":"Size (px)","default":460},
+  {"id":"top","type":"number","label":"Top (px)","default":40},
+  {"id":"offsetX","type":"number","label":"Nudge left/right (px, centre on the head)","default":-40},
+  {"id":"outAt","type":"number","label":"Word leaves (s, local)","default":4.7},
+  {"id":"color","type":"color","label":"Colour","default":"#111111"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · behind-word · BEHIND ME. Giant word rises behind the person. Place this layer UNDER the person cut-out (remove-background) so the person stays in front. Length 5.6s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vbw-big { position: absolute; left: 0; right: 0; text-align: center; font-family: "VibeHeavy"; line-height: 1; letter-spacing: -0.05em; }
+      </style>
+      <div id="root" data-composition-id="vibe-behind-word" data-width="1920" data-height="1080">
+        <div class="vbw-big"></div>
+        <audio id="vbw-sfx" src="assets/vibe/sfx/behind-thud.wav" data-start="0.23" data-duration="1.5" data-volume="0.88"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-behind-word"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const b = root.querySelector(".vbw-big");
+          b.textContent = v.word; b.style.fontSize = v.size + "px"; b.style.top = v.top + "px"; b.style.left = v.offsetX + "px"; b.style.color = v.color;
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo(b, { y: 300 }, { y: 0, duration: 0.5, ease: "power4.out" }, 0.2)
+            .to(b, { y: -40, duration: Math.max(0.1, v.outAt - 0.7), ease: "none" }, 0.7)
+            .to(b, { y: -500, duration: 0.3, ease: "power3.in" }, v.outAt);
+          window.__timelines["vibe-behind-word"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

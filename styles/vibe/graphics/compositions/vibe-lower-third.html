@@ -1,0 +1,70 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"kicker","type":"string","label":"Small label","default":"NEW TOPIC · YOUR BRAND"},
+  {"id":"name","type":"string","label":"Name (first part)","default":"Your"},
+  {"id":"highlight","type":"string","label":"Name (selected part)","default":"Name"},
+  {"id":"left","type":"number","label":"Left (px)","default":80},
+  {"id":"bottom","type":"number","label":"Bottom (px, sits above captions)","default":190}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · lower-third · WITH ME, LEFT SIDE. Ink chip, coral pixel kicker, selected surname, typing cursor. Length 4.8s. -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vlt { position: absolute; background: var(--vibe-ink); color: var(--vibe-paper); border-radius: 16px; padding: 20px 30px 22px; }
+        .vlt .k { display: block; font: 700 22px "VibePixel"; color: var(--vibe-coral); margin-bottom: 8px; }
+        .vlt .n { font: 400 52px "VibeHeavy"; letter-spacing: -0.02em; }
+        .vlt .v-sel { color: #fff; } .vlt .v-sel .v-box { background: var(--vibe-coral); }
+      </style>
+      <div id="root" data-composition-id="vibe-lower-third" data-width="1920" data-height="1080">
+        <div class="vlt"><span class="k"></span><span class="n vlt-n"></span> <span class="n v-sel"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vlt-h"></span></span><span class="v-cursor"></span></div>
+        <audio id="vlt-snap" src="assets/vibe/sfx/lowerthird-snap.wav" data-start="0.31" data-duration="0.6" data-volume="0.72"></audio>
+        <audio id="vlt-click" src="assets/vibe/sfx/select-click.wav" data-start="0.71" data-duration="0.3" data-volume="0.56"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-lower-third"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const $ = (s) => root.querySelector(s);
+          $(".k").textContent = v.kicker; $(".vlt-n").textContent = v.name; $(".vlt-h").textContent = v.highlight;
+          $(".vlt").style.left = v.left + "px"; $(".vlt").style.bottom = v.bottom + "px";
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($(".vlt"), { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 0.3)
+            .fromTo($(".v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, 0.75)
+            .fromTo(root.querySelectorAll(".v-h"), { opacity: 0 }, { opacity: 1, duration: 0.01 }, 0.95)
+            .to($(".v-cursor"), { opacity: 0, duration: 0.01, repeat: 9, yoyo: true, repeatDelay: 0.22 }, 0.8)
+            .to($(".vlt"), { x: -80, opacity: 0, duration: 0.3, ease: "power3.in" }, 4.4);
+          window.__timelines["vibe-lower-third"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

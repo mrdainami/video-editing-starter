@@ -1,0 +1,64 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"w1","type":"string","label":"Word 1 (heavy)","default":"Design"},
+  {"id":"w2","type":"string","label":"Word 2 (italic serif)","default":"your"},
+  {"id":"w3","type":"string","label":"Word 3 (font swap + selected)","default":"style"},
+  {"id":"w4","type":"string","label":"Word 4 (pixel)","default":"once."},
+  {"id":"subtitle","type":"string","label":"Subtitle","default":"your graphics, your sound, every video"},
+  {"id":"size","type":"number","label":"Title size (px)","default":128},
+  {"id":"bg","type":"color","label":"Background","default":"#f2f2f0"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · title-card · TAKEOVER. Centered mixed-font title; word 3 flickers through 4 fonts then gets selected. Starts fully covered (use after folder-storm), ends with an iris close back to the video. Length 4.6s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vtc-bg { position: absolute; inset: 0; clip-path: circle(80% at 50% 50%); }
+        .vtc-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; color: var(--vibe-ink); }
+        .vtc-title { line-height: 1.05; white-space: nowrap; }
+        .vtc-title .w { display: inline-block; margin: 0 9px; }
+        .vtc-sub { font: 600 34px "VibeTight"; color: #555; }
+      </style>
+      <div id="root" data-composition-id="vibe-title-card" data-width="1920" data-height="1080">
+        <div class="vtc-bg"></div>
+        <div class="vtc-center">
+          <div class="vtc-title"><span class="w v-heavy vtc-1"></span><span class="w v-serif vtc-2"></span><span class="w v-sel"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="v-swap"><span class="v-heavy s1"></span><span class="v-pixel s2"></span><span class="v-serif s3"></span><span class="v-tight final"></span></span></span><span class="w v-pixel vtc-4"></span><span class="v-cursor"></span></div>
+          <div class="vtc-sub"></div>
+        </div>
+        <audio id="vtc-whoosh" src="assets/vibe/sfx/title-whoosh.wav" data-start="0" data-duration="0.8" data-volume="0.72"></audio>
+        <audio id="vtc-glitch" src="assets/vibe/sfx/swap-glitch.wav" data-start="0.51" data-duration="0.45" data-volume="0.88"></audio>
+        <audio id="vtc-click" src="assets/vibe/sfx/select-click.wav" data-start="1.21" data-duration="0.3" data-volume="0.64"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-title-card"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+          $(".vtc-bg").style.background = v.bg; $(".vtc-title").style.fontSize = v.size + "px";
+          $(".vtc-1").textContent = v.w1; $(".vtc-2").textContent = v.w2; $(".vtc-4").textContent = v.w4; $(".vtc-sub").textContent = v.subtitle;
+          $$(".v-swap > span").forEach((s) => (s.textContent = v.w3));
+          const tl = gsap.timeline({ paused: true });
+          const dirs = [{ x: -600, rotate: -20 }, { y: -300, rotate: 10 }, { y: 320, rotate: -8 }, { x: 600, rotate: 18 }];
+          $$(".vtc-title .w").forEach((w, i) => tl.fromTo(w, { ...dirs[i], opacity: 0 }, { x: 0, y: 0, rotate: 0, opacity: 1, duration: 0.42, ease: "back.out(1.4)" }, 0.15 + i * 0.09));
+          const s = (c) => $(".v-swap ." + c);
+          tl.set([s("s2"), s("s3"), s("final")], { opacity: 0 }, 0).set(s("s1"), { opacity: 1 }, 0)
+            .set(s("s1"), { opacity: 0 }, 0.8).set(s("s2"), { opacity: 1 }, 0.8)
+            .set(s("s2"), { opacity: 0 }, 0.98).set(s("s3"), { opacity: 1 }, 0.98)
+            .set(s("s3"), { opacity: 0 }, 1.16).set(s("final"), { opacity: 1 }, 1.16)
+            .fromTo($(".v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, 1.25)
+            .fromTo($$(".v-h"), { opacity: 0 }, { opacity: 1, duration: 0.01 }, 1.45)
+            .fromTo($(".v-cursor"), { opacity: 0 }, { opacity: 1, duration: 0.01 }, 0.8)
+            .to($(".v-cursor"), { opacity: 0, duration: 0.01, repeat: 7, yoyo: true, repeatDelay: 0.22 }, 1.1)
+            .fromTo($(".vtc-sub"), { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 1.4)
+            .to($$(".vtc-title .w"), { y: (i) => [-60, 60, -60, 60][i], x: (i) => [-500, -150, 150, 500][i], opacity: 0, rotate: (i) => [-14, 8, -8, 14][i], duration: 0.35, ease: "power3.in", stagger: 0.03 }, 3.85)
+            .to([$(".v-cursor"), $(".vtc-sub")], { opacity: 0, duration: 0.15 }, 3.85)
+            .to($(".vtc-bg"), { clipPath: "circle(0% at 50% 50%)", duration: 0.45, ease: "power3.in" }, 4.1);
+          window.__timelines["vibe-title-card"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

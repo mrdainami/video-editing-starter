@@ -1,0 +1,63 @@
+[
+ {
+  "what": "voice",
+  "provider": "kie",
+  "model": "elevenlabs/text-to-speech-multilingual-v2 (Brittney)",
+  "state": "fail (KIE 500, 0 credits)"
+ },
+ {
+  "what": "presenter photo",
+  "provider": "kie",
+  "model": "gpt-image-2-text-to-image 2K 16:9",
+  "state": "success",
+  "file": "assets/presenter.png"
+ },
+ {
+  "what": "voice (retry)",
+  "provider": "kie",
+  "model": "elevenlabs/text-to-speech-multilingual-v2 (Brittney)",
+  "state": "fail (KIE 500, 0 credits)"
+ },
+ {
+  "what": "voice (turbo 2.5)",
+  "provider": "kie",
+  "model": "elevenlabs/text-to-speech-turbo-2-5 (Brittney)",
+  "state": "fail (KIE 500, 0 credits)"
+ },
+ {
+  "what": "voice (Jessica, defaults)",
+  "provider": "kie",
+  "model": "elevenlabs/text-to-speech-multilingual-v2",
+  "state": "fail (KIE 500, 0 credits) \u2014 switched to Seedance native audio"
+ },
+ {
+  "what": "clip 1 (lines 1-3)",
+  "provider": "kie",
+  "model": "bytedance/seedance-2-mini 720p 15s, first frame = presenter, native audio",
+  "state": "success",
+  "file": "assets/clips/clip1.mp4",
+  "credits": 123
+ },
+ {
+  "what": "clip 2 (lines 3b-5)",
+  "provider": "kie",
+  "model": "bytedance/seedance-2-mini 720p 15s, ref image + clip1 voice",
+  "state": "success",
+  "file": "assets/clips/clip2.mp4",
+  "credits": 123
+ },
+ {
+  "what": "clip 3 (lines 6-9)",
+  "provider": "kie",
+  "model": "bytedance/seedance-2-mini",
+  "state": "refused: 402 insufficient KIE credits (not charged)"
+ },
+ {
+  "what": "clip 3 (lines 6-9, trimmed)",
+  "provider": "kie",
+  "model": "bytedance/seedance-2-mini 720p 14s, ref image + clip1 voice",
+  "state": "success",
+  "file": "assets/clips/clip3.mp4",
+  "credits": 114.8
+ }
+]

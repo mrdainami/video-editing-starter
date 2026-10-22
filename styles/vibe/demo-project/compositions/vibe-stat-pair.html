@@ -1,0 +1,95 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"leftNum","type":"string","label":"Left big number","default":"10×"},
+  {"id":"leftLabel","type":"string","label":"Left label","default":"FASTER EDITS"},
+  {"id":"bars","type":"string","label":"Left bars, % heights, last is coral","default":"100,82,60,38,14"},
+  {"id":"rightFrom","type":"number","label":"Right counter from","default":48},
+  {"id":"rightTo","type":"number","label":"Right counter to","default":5},
+  {"id":"rightUnit","type":"string","label":"Right unit","default":"min"},
+  {"id":"rightLabel","type":"string","label":"Right label","default":"PER EDIT"},
+  {"id":"rightNote","type":"string","label":"Right note","default":"down to 5 min with your style pack"},
+  {"id":"rightNoteBold","type":"string","label":"Words in the note to make coral","default":"5 min"},
+  {"id":"top","type":"number","label":"Top (px, from subject map)","default":110},
+  {"id":"inset","type":"number","label":"Side inset (px)","default":110}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · stat-pair · WITH ME. Two matching stat cards, mirrored in the top free zones: big number + bars (left), counter + ring (right). Length 4.9s. -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vst-card { position: absolute; width: 480px; height: 340px; border-radius: 26px; background: rgba(242,242,240,.96); box-shadow: 0 18px 50px rgba(0,0,0,.2); padding: 30px 36px; color: var(--vibe-ink); }
+        .vst-num { font: 400 120px/1 "VibeHeavy"; letter-spacing: -0.04em; }
+        .vst-num .br { font-family: "VibeSerif"; font-style: italic; color: var(--vibe-coral-deep); }
+        .vst-lab { font: 700 26px "VibePixel"; margin-top: 10px; }
+        .vst-bars { position: absolute; left: 36px; right: 36px; bottom: 30px; height: 90px; display: flex; gap: 14px; align-items: flex-end; }
+        .vst-bars i { flex: 1; background: #d9d6cf; border-radius: 6px 6px 2px 2px; transform-origin: bottom; }
+        .vst-bars i:last-child { background: var(--vibe-coral); }
+        .vst-ring { position: absolute; right: 36px; top: 34px; width: 150px; height: 150px; }
+        .vst-ring circle { fill: none; stroke-width: 18; }
+        .vst-unit { font: 700 30px "VibeTight"; color: #555; margin-left: 6px; }
+        .vst-note { position: absolute; left: 36px; right: 36px; bottom: 34px; font: 600 26px "VibeTight"; color: #555; }
+        .vst-note b { color: var(--vibe-coral-deep); }
+      </style>
+      <div id="root" data-composition-id="vibe-stat-pair" data-width="1920" data-height="1080">
+        <div class="vst-card vst-l"><div class="vst-num"><span class="br">{</span><span class="vst-ln"></span><span class="br">}</span></div><div class="vst-lab vst-ll"></div><div class="vst-bars"></div></div>
+        <div class="vst-card vst-r"><div class="vst-num"><span class="vst-cnt"></span><span class="vst-unit"></span></div><div class="vst-lab vst-rl"></div>
+          <svg class="vst-ring" viewBox="0 0 150 150"><circle cx="75" cy="75" r="60" stroke="#e1ded7" /><circle class="vst-prog" cx="75" cy="75" r="60" stroke="#fc6467" stroke-linecap="round" stroke-dasharray="377" stroke-dashoffset="377" transform="rotate(-90 75 75)" /></svg>
+          <div class="vst-note"></div></div>
+        <audio id="vst-sfx" src="assets/vibe/sfx/stat-slide-count.wav" data-start="0.2" data-duration="1.6" data-volume="0.72"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-stat-pair"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const $ = (s) => root.querySelector(s);
+          $(".vst-ln").textContent = v.leftNum; $(".vst-ll").textContent = v.leftLabel; $(".vst-rl").textContent = v.rightLabel;
+          $(".vst-cnt").textContent = v.rightFrom; $(".vst-unit").textContent = v.rightUnit;
+          const note = $(".vst-note"); const i = v.rightNote.indexOf(v.rightNoteBold);
+          if (v.rightNoteBold && i >= 0) { note.append(v.rightNote.slice(0, i)); const b = document.createElement("b"); b.textContent = v.rightNoteBold; note.append(b, v.rightNote.slice(i + v.rightNoteBold.length)); } else note.textContent = v.rightNote;
+          String(v.bars).split(",").forEach((h) => { const e = document.createElement("i"); e.style.height = parseFloat(h) + "%"; $(".vst-bars").appendChild(e); });
+          [$(".vst-l"), $(".vst-r")].forEach((c) => (c.style.top = v.top + "px"));
+          $(".vst-l").style.left = v.inset + "px"; $(".vst-r").style.right = v.inset + "px";
+          const pct = Math.max(0.05, Math.min(1, 1 - v.rightTo / Math.max(1, v.rightFrom)));
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($(".vst-l"), { x: -140, opacity: 0, rotate: -6 }, { x: 0, opacity: 1, rotate: 0, duration: 0.5, ease: "back.out(1.6)" }, 0.2)
+            .fromTo($(".vst-r"), { x: 140, opacity: 0, rotate: 6 }, { x: 0, opacity: 1, rotate: 0, duration: 0.5, ease: "back.out(1.6)" }, 0.2)
+            .fromTo(root.querySelectorAll(".vst-bars i"), { scaleY: 0 }, { scaleY: 1, duration: 0.45, ease: "power3.out", stagger: 0.08 }, 0.6)
+            .to($(".vst-prog"), { attr: { "stroke-dashoffset": 377 * (1 - pct) }, duration: 1.4, ease: "power2.inOut" }, 0.7)
+            .fromTo($(".vst-cnt"), { innerText: v.rightFrom }, { innerText: v.rightTo, snap: { innerText: 1 }, duration: 1.4, ease: "power2.inOut" }, 0.7)
+            .fromTo($(".vst-l .vst-num"), { scale: 0.7 }, { scale: 1, duration: 0.4, ease: "back.out(3)" }, 0.5)
+            .to($(".vst-l"), { x: -140, opacity: 0, duration: 0.35, ease: "power3.in" }, 4.4)
+            .to($(".vst-r"), { x: 140, opacity: 0, duration: 0.35, ease: "power3.in" }, 4.4);
+          window.__timelines["vibe-stat-pair"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"bg","type":"color","label":"Background it lands on","default":"#f2f2f0"},
+  {"id":"count","type":"number","label":"Number of folders","default":26}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · folder-storm · TRANSITION IN (takeover). Folders rush in from both sides, the background bursts from the centre. Ends fully covered. Length 1.3s. -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vfs-bg { position: absolute; inset: 0; clip-path: circle(0% at 50% 50%); z-index: 1; }
+        .vfs-storm { position: absolute; inset: 0; z-index: 2; }
+      </style>
+      <div id="root" data-composition-id="vibe-folder-storm" data-width="1920" data-height="1080">
+        <div class="vfs-bg"></div><div class="vfs-storm"></div>
+        <audio id="vfs-sfx" src="assets/vibe/sfx/storm-flutter.wav" data-start="0.03" data-duration="1.4" data-volume="0.8"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-folder-storm"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          root.querySelector(".vfs-bg").style.background = v.bg;
+          const storm = root.querySelector(".vfs-storm");
+          for (let i = 0; i < v.count; i++) {
+            const d = document.createElement("div"); d.className = "v-folder";
+            const side = i % 2 ? 1 : -1, k = Math.floor(i / 2);
+            d.dataset.sx = side * (1150 + (k % 4) * 120); d.dataset.sy = -420 + (k * 71) % 840;
+            d.dataset.ex = ((k % 5) - 2) * 70 + side * 40; d.dataset.ey = ((k % 3) - 1) * 60; d.dataset.r = side * (10 + (k % 4) * 6);
+            d.style.left = "885px"; d.style.top = "484px"; storm.appendChild(d);
+          }
+          const tl = gsap.timeline({ paused: true });
+          storm.querySelectorAll(".v-folder").forEach((f, i) => {
+            const sx = +f.dataset.sx, sy = +f.dataset.sy, ex = +f.dataset.ex, ey = +f.dataset.ey, r = +f.dataset.r;
+            tl.fromTo(f, { x: sx, y: sy, rotate: r * 2, scale: 1.3, opacity: 1 }, { x: ex, y: ey, rotate: r * 0.3, scale: 0.9, duration: 0.55, ease: "power2.inOut" }, 0.05 + (i % 13) * 0.025)
+              .to(f, { x: ex * 9 + (i % 2 ? 300 : -300), y: ey * 9 + ((i % 3) - 1) * 300, rotate: -r * 3, scale: 0.5, opacity: 0, duration: 0.5, ease: "power3.in" }, 0.8 + (i % 6) * 0.02);
+          });
+          tl.fromTo(root.querySelector(".vfs-bg"), { clipPath: "circle(0% at 50% 50%)" }, { clipPath: "circle(80% at 50% 50%)", duration: 0.5, ease: "power3.inOut" }, 0.65);
+          window.__timelines["vibe-folder-storm"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

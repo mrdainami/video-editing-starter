@@ -1,0 +1,68 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"leftLabel","type":"string","label":"Left label","default":"THE PROBLEM"},
+  {"id":"problem","type":"string","label":"Problem text","default":"grow my channel"},
+  {"id":"rightLabel","type":"string","label":"Right label","default":"NEXT NEW TOOL"},
+  {"id":"rightNote","type":"string","label":"Right note","default":"comes & goes"},
+  {"id":"logos","type":"string","label":"logos name|hex that flick past","default":"perplexity|1FB8CD;notion|000000;zapier|FF4F00;n8n|EA4B71"},
+  {"id":"rightAt","type":"number","label":"When the tool card appears (s, local)","default":1.2},
+  {"id":"checkAt","type":"number","label":"When the problem gets the tick (s, local)","default":3.2}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · problem-vs-tool · WITH ME, mirrored. Left: a coral magnifier settles on the real problem and it gets a tick. Right: tool logos flick in and fall away greyed ("next new tool comes & goes"). Length ~4.7s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vpt-card { position: absolute; top: 100px; width: 480px; height: 360px; border-radius: 26px; background: rgba(242,242,240,.96); box-shadow: 0 18px 50px rgba(0,0,0,.2); padding: 24px 30px; color: var(--vibe-ink); overflow: hidden; }
+        .vpt-l { left: 110px; } .vpt-r { right: 110px; }
+        .vpt-lab { font: 700 26px "VibePixel"; }
+        .vpt-prob { position: absolute; left: 30px; right: 120px; top: 100px; font: 400 54px/1.05 "VibeHeavy"; letter-spacing: -0.02em; }
+        .vpt-mag { position: absolute; left: 300px; top: 150px; width: 140px; height: 140px; }
+        .vpt-check { position: absolute; right: 26px; bottom: 22px; width: 70px; height: 70px; border-radius: 50%; background: var(--vibe-coral); display: grid; place-items: center; font: 700 44px "VibeTight"; color: #fff; }
+        .vpt-stack { position: absolute; left: 0; right: 0; top: 120px; height: 130px; }
+        .vpt-stack .vlogo { left: 180px; top: 0; }
+        .vpt-note { position: absolute; left: 0; right: 0; bottom: 30px; text-align: center; font: 600 30px "VibeSerif"; font-style: italic; color: #555; }
+        .vlogo { position: absolute; width: 120px; height: 120px; border-radius: 50%; background: #fff; box-shadow: 0 10px 26px rgba(0,0,0,.22); display: grid; place-items: center; }
+        .vlogo i { width: 66px; height: 66px; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; background: var(--c); }
+      </style>
+      <div id="root" data-composition-id="vibe-problem-vs-tool" data-width="1920" data-height="1080">
+        <div class="vpt-card vpt-l"><div class="vpt-lab vpt-ll"></div><div class="vpt-prob"></div>
+          <svg class="vpt-mag" viewBox="0 0 170 170"><circle cx="70" cy="70" r="52" fill="rgba(252,100,103,.14)" stroke="#fc6467" stroke-width="12" /><line x1="108" y1="108" x2="158" y2="158" stroke="#111" stroke-width="16" stroke-linecap="round" /></svg>
+          <div class="vpt-check">✓</div></div>
+        <div class="vpt-card vpt-r"><div class="vpt-lab vpt-rl"></div><div class="vpt-stack"></div><div class="vpt-note"></div></div>
+        <audio id="vpt-pop1" src="assets/vibe/sfx/pop.wav" data-start="0.32" data-duration="0.72" data-volume="0.55"></audio>
+        <audio id="vpt-click" src="assets/vibe/sfx/select-click.wav" data-start="3.17" data-duration="0.3" data-volume="0.65"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-problem-vs-tool"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host;
+          const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+          $(".vpt-ll").textContent = v.leftLabel; $(".vpt-prob").textContent = v.problem; $(".vpt-rl").textContent = v.rightLabel; $(".vpt-note").textContent = v.rightNote;
+          const logos = v.logos.split(";").map((s) => s.split("|"));
+          logos.forEach(([n, h]) => { const c = document.createElement("div"); c.className = "vlogo"; const i = document.createElement("i"); i.style.setProperty("--m", 'url("assets/logos/' + n + '.svg")'); i.style.setProperty("--c", "#" + h); c.appendChild(i); $(".vpt-stack").appendChild(c); });
+          const R = v.rightAt, C = v.checkAt;
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($(".vpt-l"), { x: -140, opacity: 0, rotate: -6 }, { x: 0, opacity: 1, rotate: 0, duration: 0.5, ease: "back.out(1.6)" }, 0.2)
+            .fromTo($(".vpt-mag"), { x: 160, y: 120, rotate: 25, opacity: 0 }, { x: 0, y: 0, rotate: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0.55)
+            .to($(".vpt-mag"), { rotate: -10, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 1 }, 1.2)
+            .fromTo($(".vpt-check"), { scale: 0 }, { scale: 1, duration: 0.35, ease: "back.out(3)" }, C)
+            .fromTo($(".vpt-r"), { x: 140, opacity: 0, rotate: 6 }, { x: 0, opacity: 1, rotate: 0, duration: 0.5, ease: "back.out(1.6)" }, R - 0.25)
+            .fromTo($(".vpt-note"), { opacity: 0 }, { opacity: 1, duration: 0.3 }, R + 0.3);
+          $$(".vpt-stack .vlogo").forEach((c, k) => {
+            const t = R + k * 0.55, last = k === logos.length - 1;
+            tl.fromTo(c, { y: -200, rotate: -20, opacity: 0, filter: "grayscale(0)" }, { y: 0, rotate: 0, opacity: 1, duration: 0.3, ease: "back.out(2)", immediateRender: true }, t);
+            if (!last) tl.to(c, { y: 220, rotate: 35, opacity: 0, filter: "grayscale(1)", duration: 0.35, ease: "power3.in" }, t + 0.45);
+            else tl.to(c, { filter: "grayscale(1)", opacity: 0.45, duration: 0.3 }, t + 0.6);
+          });
+          tl.to($(".vpt-l"), { x: -140, opacity: 0, duration: 0.35, ease: "power3.in" }, 4.35)
+            .to($(".vpt-r"), { x: 140, opacity: 0, duration: 0.35, ease: "power3.in" }, 4.35);
+          window.__timelines["vibe-problem-vs-tool"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

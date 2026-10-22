@@ -1,0 +1,76 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"h1","type":"string","label":"Heading word 1 (heavy)","default":"works"},
+  {"id":"h2","type":"string","label":"Heading words 2 (serif)","default":"on any"},
+  {"id":"h3","type":"string","label":"Heading word 3 (selected)","default":"screen"},
+  {"id":"mediaStart","type":"number","label":"Start point inside assets/screen.mp4 for the laptop (s)","default":5},
+  {"id":"appTitle","type":"string","label":"Phone app title","default":"vibe"},
+  {"id":"appAccent","type":"string","label":"Phone app title, italic part","default":"pack"},
+  {"id":"rows","type":"string","label":"Phone rows: label|on ; separated","default":"Title card|on;Stat pop|on;Sounds|off"},
+  {"id":"preview","type":"string","label":"Phone preview tile","default":"10×"},
+  {"id":"exitX","type":"number","label":"Exit iris centre x (face)","default":960},
+  {"id":"exitY","type":"number","label":"Exit iris centre y (face)","default":360}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · device-mockups · TAKEOVER. Laptop (plays assets/screen.mp4) + phone app mockup, floating, on paper. Exits with an iris that closes onto the face position. Length 6.0s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vdm-bg { position: absolute; inset: 0; background: var(--vibe-paper); }
+        .vdm-head { position: absolute; top: 70px; left: 140px; font-size: 84px; color: var(--vibe-ink); }
+        .vdm-lap { position: absolute; left: 140px; top: 250px; width: 1060px; }
+        .vdm-scr { position: relative; height: 640px; border-radius: 26px 26px 0 0; background: #1d1d1f; padding: 20px; }
+        .vdm-in { position: relative; width: 100%; height: 100%; border-radius: 10px; overflow: hidden; background: #000; }
+        .vdm-in video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .vdm-base { height: 34px; margin: 0 -60px; border-radius: 0 0 26px 26px; background: linear-gradient(180deg, #d6d3cc, #b9b5ad); }
+        .vdm-phone { position: absolute; left: 1330px; top: 170px; width: 420px; height: 860px; border-radius: 64px; background: var(--vibe-ink); padding: 18px; box-shadow: 0 40px 80px rgba(0,0,0,.3); }
+        .vdm-pin { position: relative; width: 100%; height: 100%; border-radius: 48px; background: var(--vibe-paper); overflow: hidden; padding: 70px 30px 30px; }
+        .vdm-notch { position: absolute; left: 50%; top: 18px; width: 130px; height: 36px; margin-left: -65px; border-radius: 20px; background: var(--vibe-ink); }
+        .vdm-pin h4 { font: 400 48px "VibeHeavy"; letter-spacing: -0.03em; color: var(--vibe-ink); }
+        .vdm-pin h4 em { font-family: "VibeSerif"; font-style: italic; color: var(--vibe-coral-deep); }
+        .vdm-row { display: flex; align-items: center; justify-content: space-between; margin-top: 22px; padding: 18px 20px; border-radius: 18px; background: #fff; font: 700 26px "VibeTight"; color: var(--vibe-ink); }
+        .vdm-tg { width: 70px; height: 40px; border-radius: 20px; background: #d9d6cf; position: relative; }
+        .vdm-tg::after { content: ""; position: absolute; top: 5px; left: 5px; width: 30px; height: 30px; border-radius: 50%; background: #fff; }
+        .vdm-tg.on { background: var(--vibe-coral); } .vdm-tg.on::after { left: 35px; }
+        .vdm-prev { margin-top: 26px; height: 210px; border-radius: 22px; background: var(--vibe-ink); color: var(--vibe-paper); display: grid; place-items: center; font: 400 54px "VibeHeavy"; }
+        .vdm-prev span { color: var(--vibe-coral); font-family: "VibeSerif"; font-style: italic; }
+      </style>
+      <div id="root" data-composition-id="vibe-device-mockups" data-width="1920" data-height="1080">
+        <div class="vdm-bg"></div>
+        <div class="vdm-head"><span class="v-heavy vdm-h1"></span> <span class="v-serif vdm-h2"></span> <span class="v-sel v-tight"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vdm-h3"></span></span></div>
+        <div class="vdm-lap"><div class="vdm-scr"><div class="vdm-in"><video id="vdm-screen" src="assets/screen.mp4" data-start="0" data-duration="6" data-media-start="5" muted playsinline></video></div></div><div class="vdm-base"></div></div>
+        <div class="vdm-phone"><div class="vdm-pin"><div class="vdm-notch"></div><h4><span class="vdm-at"></span> <em class="vdm-aa"></em></h4><div class="vdm-rows"></div><div class="vdm-prev"><div>{<span class="vdm-pv"></span>}</div></div></div></div>
+        <audio id="vdm-thump" src="assets/vibe/sfx/mockup-thump-swoosh.wav" data-start="0" data-duration="1.3" data-volume="0.8"></audio>
+        <audio id="vdm-click" src="assets/vibe/sfx/select-click.wav" data-start="0.66" data-duration="0.3" data-volume="0.56"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-device-mockups"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+          $(".vdm-h1").textContent = v.h1; $(".vdm-h2").textContent = v.h2; $(".vdm-h3").textContent = v.h3;
+          $(".vdm-at").textContent = v.appTitle; $(".vdm-aa").textContent = v.appAccent; $(".vdm-pv").textContent = v.preview;
+          $("#vdm-screen").setAttribute("data-media-start", v.mediaStart);
+          v.rows.split(";").slice(0, 4).forEach((r) => { const [label, on] = r.split("|"); const d = document.createElement("div"); d.className = "vdm-row"; d.textContent = label; const t = document.createElement("span"); t.className = "vdm-tg" + (on === "on" ? " on" : " flip"); d.appendChild(t); $(".vdm-rows").appendChild(d); });
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($(".vdm-lap"), { y: 120, scale: 0.94, opacity: 0 }, { y: 0, scale: 1, opacity: 1, duration: 0.5, ease: "power3.out" }, 0)
+            .fromTo($(".vdm-phone"), { y: 700, rotate: 8 }, { y: 0, rotate: 0, duration: 0.6, ease: "back.out(1.3)" }, 0.2)
+            .fromTo($$(".vdm-head > *"), { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(1.6)", stagger: 0.08 }, 0.45)
+            .fromTo($(".v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25 }, 0.7)
+            .fromTo($$(".vdm-row, .vdm-prev"), { x: 60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power3.out", stagger: 0.1 }, 0.75)
+            .to($$(".vdm-tg.flip"), { backgroundColor: "#fc6467", duration: 0.2 }, 1.95)
+            .to($(".vdm-lap"), { y: -14, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.95)
+            .to($(".vdm-phone"), { y: 14, duration: 1.4, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.95)
+            .to($(".vdm-lap"), { x: -900, rotate: -6, duration: 0.45, ease: "power3.in" }, 5.4)
+            .to($(".vdm-phone"), { x: 900, rotate: 6, duration: 0.45, ease: "power3.in" }, 5.4)
+            .to($(".vdm-head"), { y: -200, opacity: 0, duration: 0.35, ease: "power3.in" }, 5.4)
+            .fromTo($(".vdm-bg"), { clipPath: `circle(150% at ${v.exitX}px ${v.exitY}px)` }, { clipPath: `circle(0% at ${v.exitX}px ${v.exitY}px)`, duration: 0.45, ease: "power3.in" }, 5.55);
+          window.__timelines["vibe-device-mockups"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

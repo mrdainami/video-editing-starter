@@ -1,0 +1,60 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"h1","type":"string","label":"Heading word 1 (heavy)","default":"every"},
+  {"id":"h2","type":"string","label":"Heading word 2 (serif)","default":"video,"},
+  {"id":"h3","type":"string","label":"Heading word 3 (selected)","default":"faster"},
+  {"id":"num","type":"string","label":"Big number","default":"10×"},
+  {"id":"numLabel","type":"string","label":"Big number label","default":"LESS EDITING TIME"},
+  {"id":"bars","type":"string","label":"Bar values (last is coral)","default":"48,34,21,5"},
+  {"id":"axis","type":"string","label":"Chart label","default":"MINUTES · VIDEO 1 → 4"},
+  {"id":"bg","type":"color","label":"Background","default":"#f4f1ea"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · big-stat · TAKEOVER (big graphic). Huge number + bar chart on cream. Use between vibe-iris close and vibe-iris open. Length 4.2s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vbs-bg { position: absolute; inset: 0; }
+        .vbs-h { position: absolute; top: 110px; left: 0; right: 0; text-align: center; font-size: 92px; color: var(--vibe-ink); }
+        .vbs-num { position: absolute; left: 170px; top: 330px; font: 400 330px/1 "VibeHeavy"; letter-spacing: -0.05em; color: var(--vibe-ink); }
+        .vbs-num .br { font-family: "VibeSerif"; font-style: italic; color: var(--vibe-coral-deep); }
+        .vbs-num small { display: block; font: 700 40px "VibePixel"; letter-spacing: 0; margin-top: 10px; }
+        .vbs-chart { position: absolute; left: 1060px; top: 330px; width: 690px; height: 470px; border-left: 4px solid var(--vibe-ink); border-bottom: 4px solid var(--vibe-ink); display: flex; align-items: flex-end; gap: 30px; padding: 0 30px; }
+        .vbs-chart i { flex: 1; background: #cfcbc2; border-radius: 10px 10px 0 0; transform-origin: bottom; position: relative; }
+        .vbs-chart i:last-of-type { background: var(--vibe-coral); }
+        .vbs-chart i b { position: absolute; top: -48px; left: 0; right: 0; text-align: center; font: 800 30px "VibeTight"; font-style: normal; color: var(--vibe-ink); }
+        .vbs-xl { position: absolute; left: 0; right: 0; bottom: -56px; text-align: center; font: 700 24px "VibePixel"; color: var(--vibe-ink); }
+      </style>
+      <div id="root" data-composition-id="vibe-big-stat" data-width="1920" data-height="1080">
+        <div class="vbs-bg"></div>
+        <div class="vbs-h"><span class="v-heavy vbs-1"></span> <span class="v-serif vbs-2"></span> <span class="v-sel v-tight"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vbs-3"></span></span></div>
+        <div class="vbs-num"><span class="br">{</span><span class="vbs-n"></span><span class="br">}</span><small class="vbs-nl"></small></div>
+        <div class="vbs-chart"><div class="vbs-xl"></div></div>
+        <audio id="vbs-click" src="assets/vibe/sfx/select-click.wav" data-start="0.41" data-duration="0.3" data-volume="0.56"></audio>
+        <audio id="vbs-count" src="assets/vibe/sfx/stat-slide-count.wav" data-start="0.6" data-duration="1.6" data-volume="0.64"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-big-stat"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const $ = (s) => root.querySelector(s);
+          $(".vbs-bg").style.background = v.bg; $(".vbs-1").textContent = v.h1; $(".vbs-2").textContent = v.h2; $(".vbs-3").textContent = v.h3;
+          $(".vbs-n").textContent = v.num; $(".vbs-nl").textContent = v.numLabel; $(".vbs-xl").textContent = v.axis;
+          const vals = String(v.bars).split(",").map(Number); const max = Math.max(...vals);
+          vals.forEach((n) => { const i = document.createElement("i"); i.style.height = (n / max) * 100 + "%"; const b = document.createElement("b"); b.textContent = n; i.appendChild(b); $(".vbs-chart").insertBefore(i, $(".vbs-xl")); });
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo(root.querySelectorAll(".vbs-h > *"), { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "back.out(1.6)", stagger: 0.08 }, 0.05)
+            .fromTo($(".v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25 }, 0.4)
+            .fromTo($(".vbs-num"), { x: -200, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power4.out" }, 0.25)
+            .fromTo($(".vbs-chart"), { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.4)
+            .fromTo(root.querySelectorAll(".vbs-chart i"), { scaleY: 0 }, { scaleY: 1, duration: 0.5, ease: "power3.out", stagger: 0.12 }, 0.5)
+            .to(root.querySelectorAll(".vbs-h, .vbs-num, .vbs-chart"), { opacity: 0, duration: 0.2 }, 4.0);
+          window.__timelines["vibe-big-stat"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

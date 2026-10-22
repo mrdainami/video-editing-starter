@@ -1,0 +1,45 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"kicker","type":"string","label":"Small label","default":"NEW TOPIC · YOUR BRAND"},
+  {"id":"name","type":"string","label":"Name (first part)","default":"Your"},
+  {"id":"highlight","type":"string","label":"Name (selected part)","default":"Name"},
+  {"id":"left","type":"number","label":"Left (px)","default":80},
+  {"id":"bottom","type":"number","label":"Bottom (px, sits above captions)","default":190}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · lower-third · WITH ME, LEFT SIDE. Ink chip, coral pixel kicker, selected surname, typing cursor. Length 4.8s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vlt { position: absolute; background: var(--vibe-ink); color: var(--vibe-paper); border-radius: 16px; padding: 20px 30px 22px; }
+        .vlt .k { display: block; font: 700 22px "VibePixel"; color: var(--vibe-coral); margin-bottom: 8px; }
+        .vlt .n { font: 400 52px "VibeHeavy"; letter-spacing: -0.02em; }
+        .vlt .v-sel { color: #fff; } .vlt .v-sel .v-box { background: var(--vibe-coral); }
+      </style>
+      <div id="root" data-composition-id="vibe-lower-third" data-width="1920" data-height="1080">
+        <div class="vlt"><span class="k"></span><span class="n vlt-n"></span> <span class="n v-sel"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vlt-h"></span></span><span class="v-cursor"></span></div>
+        <audio id="vlt-snap" src="assets/vibe/sfx/lowerthird-snap.wav" data-start="0.31" data-duration="0.6" data-volume="0.72"></audio>
+        <audio id="vlt-click" src="assets/vibe/sfx/select-click.wav" data-start="0.71" data-duration="0.3" data-volume="0.56"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-lower-third"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const $ = (s) => root.querySelector(s);
+          $(".k").textContent = v.kicker; $(".vlt-n").textContent = v.name; $(".vlt-h").textContent = v.highlight;
+          $(".vlt").style.left = v.left + "px"; $(".vlt").style.bottom = v.bottom + "px";
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($(".vlt"), { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 0.3)
+            .fromTo($(".v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, 0.75)
+            .fromTo(root.querySelectorAll(".v-h"), { opacity: 0 }, { opacity: 1, duration: 0.01 }, 0.95)
+            .to($(".v-cursor"), { opacity: 0, duration: 0.01, repeat: 9, yoyo: true, repeatDelay: 0.22 }, 0.8)
+            .to($(".vlt"), { x: -80, opacity: 0, duration: 0.3, ease: "power3.in" }, 4.4);
+          window.__timelines["vibe-lower-third"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

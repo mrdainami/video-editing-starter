@@ -1,0 +1,47 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"mode","type":"string","label":"cover (blocks fill the screen) or reveal (blocks clear away)","default":"cover"},
+  {"id":"bg","type":"color","label":"Colour it lands on / leaves from","default":"#111111"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · block-wipe · TRANSITION. Chunky ink / paper / coral blocks. cover: video -> solid bg. reveal: solid bg -> whatever is underneath. Length 0.8s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vbk-bg { position: absolute; inset: 0; z-index: 1; }
+        .vbk-blk { position: absolute; width: 160px; height: 154.3px; background: var(--vibe-ink); z-index: 2; }
+        .vbk-blk.w { background: var(--vibe-paper); } .vbk-blk.c { background: var(--vibe-coral); }
+      </style>
+      <div id="root" data-composition-id="vibe-block-wipe" data-width="1920" data-height="1080">
+        <div class="vbk-bg"></div>
+        <audio id="vbk-sfx" src="assets/vibe/sfx/whoosh.wav" data-start="0.02" data-duration="0.57" data-volume="0.55"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-block-wipe"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host; // inner root, so added elements inherit the pack's styles
+          const bg = root.querySelector(".vbk-bg"); bg.style.background = v.bg;
+          const blks = [];
+          for (let r = 0; r < 7; r++) for (let c = 0; c < 12; c++) {
+            const d = document.createElement("div"); const m = (r * 5 + c * 3) % 11;
+            d.className = "vbk-blk" + (m === 0 ? " w" : m === 5 ? " c" : "");
+            d.style.left = c * 160 + "px"; d.style.top = r * 154.3 + "px"; d.dataset.o = (r + c * 2) % 9; root.appendChild(d); blks.push(d);
+          }
+          const tl = gsap.timeline({ paused: true });
+          if (v.mode === "reveal") {
+            tl.set(bg, { opacity: 1 }, 0).set(bg, { opacity: 0 }, 0.02);
+            blks.forEach((b) => tl.fromTo(b, { scale: 1 }, { scale: 0, duration: 0.16, ease: "power2.in" }, 0.05 + (8 - b.dataset.o) * 0.025));
+          } else {
+            tl.set(bg, { opacity: 0 }, 0).set(bg, { opacity: 1 }, 0.5);
+            blks.forEach((b) => tl.fromTo(b, { scale: 0 }, { scale: 1, duration: 0.16, ease: "power2.out" }, 0.05 + b.dataset.o * 0.03));
+            tl.to(blks, { scale: 0, duration: 0.16, ease: "power2.in", stagger: 0.002 }, 0.55);
+          }
+          window.__timelines["vibe-block-wipe"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

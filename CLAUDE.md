@@ -1,1 +1,1 @@
-Read AGENTS.md in this folder and follow its workflow. Read the relevant files under skills/ explicitly; slash-command installation is optional.
+Read AGENTS.md in this folder and follow it. The commands (/setup, /new-video, /styles …) are the skills in skills/; they are also installed in .claude/skills/ so they appear in the / menu.

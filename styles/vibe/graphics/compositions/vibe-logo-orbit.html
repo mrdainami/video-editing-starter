@@ -1,0 +1,88 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"logos","type":"string","label":"logo files|hex ; separated (assets/logos/<name>.svg)","default":"openai|412991;claude|D97757;googlegemini|8E75B2;perplexity|1FB8CD;notion|000000;githubcopilot|000000;huggingface|E0A800;meta|0467DF;n8n|EA4B71;zapier|FF4F00;anthropic|191919;openai|412991"},
+  {"id":"cx","type":"number","label":"Head centre x","default":960},
+  {"id":"cy","type":"number","label":"Orbit centre y","default":330},
+  {"id":"rx","type":"number","label":"Orbit radius x","default":540},
+  {"id":"ry","type":"number","label":"Orbit radius y","default":290},
+  {"id":"outAt","type":"number","label":"Logos burst outward (s, local)","default":1.5}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · logo-orbit · BEHIND ME (under the cut-out). Real tool logos orbit the head; each one pops in, then drops away greyed and a new one takes its place ("tools come and go"). Length ~3.4s. -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vlogo { position: absolute; width: 120px; height: 120px; border-radius: 50%; background: #fff; box-shadow: 0 10px 26px rgba(0,0,0,.22); display: grid; place-items: center; }
+        .vlogo i { width: 66px; height: 66px; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; background: var(--c); }
+      </style>
+      <div id="root" data-composition-id="vibe-logo-orbit" data-width="1920" data-height="1080">
+        <audio id="vlo-p1" src="assets/vibe/sfx/pop.wav" data-start="0" data-duration="0.72" data-volume="0.5"></audio>
+        <audio id="vlo-w" src="assets/vibe/sfx/whoosh-short.wav" data-start="1.36" data-duration="0.57" data-volume="0.5"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-logo-orbit"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host;
+          const L = v.logos.split(";").map((s) => s.split("|"));
+          const N = 6, chips = [];
+          for (let k = 0; k < 2 * N; k++) {
+            const [name, hex] = L[k % L.length];
+            const c = document.createElement("div"); c.className = "vlogo";
+            const i = document.createElement("i"); i.style.setProperty("--m", 'url("assets/logos/' + name + '.svg")'); i.style.setProperty("--c", "#" + hex);
+            c.appendChild(i); root.appendChild(c); chips.push(c);
+          }
+          const st = { a: 0 };
+          const place = () => chips.forEach((c, k) => {
+            const slot = k % N, ang = (slot / N) * Math.PI * 2 + st.a - Math.PI / 2;
+            gsap.set(c, { x: v.cx + Math.cos(ang) * v.rx - 60, y: v.cy + Math.sin(ang) * v.ry - 60 });
+          });
+          place();
+          const tl = gsap.timeline({ paused: true });
+          const O = v.outAt;
+          tl.to(st, { a: 1.2, duration: O + 0.4, ease: "none", onUpdate: place }, 0);
+          // first six pop in around the head; the second six swap in for some of them ("come and go")
+          chips.forEach((c, k) => {
+            const slot = k % N, first = k < N;
+            if (first) {
+              tl.fromTo(c, { scale: 0, opacity: 1, filter: "grayscale(0)" }, { scale: 1, duration: 0.28, ease: "back.out(2.5)", immediateRender: true }, 0.05 + slot * 0.07);
+              if (slot % 2 === 0) tl.to(c, { filter: "grayscale(1)", opacity: 0, scale: 0.3, duration: 0.25, ease: "power3.in" }, 0.75 + slot * 0.05);
+              else tl.to(c, { scale: 3, opacity: 0, x: "+=" + (Math.cos((slot / N) * 6.283) * 700), y: "+=" + (Math.sin((slot / N) * 6.283 - 1.57) * 500), duration: 0.4, ease: "power3.in" }, O);
+            } else if (slot % 2 === 0) {
+              tl.fromTo(c, { scale: 0, opacity: 1 }, { scale: 1, duration: 0.28, ease: "back.out(2.5)", immediateRender: true }, 0.95 + slot * 0.05)
+                .to(c, { scale: 3, opacity: 0, duration: 0.4, ease: "power3.in" }, O);
+            } else { gsap.set(c, { opacity: 0 }); }
+          });
+          window.__timelines["vibe-logo-orbit"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

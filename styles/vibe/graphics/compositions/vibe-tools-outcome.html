@@ -1,0 +1,148 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"a1","type":"string","label":"Part 1 heading (heavy)","default":"AI tools"},
+  {"id":"a2","type":"string","label":"Part 1 heading (selected)","default":"come & go"},
+  {"id":"b1","type":"string","label":"Part 2 heading (serif)","default":"focus on the"},
+  {"id":"b2","type":"string","label":"Part 2 heading (selected)","default":"outcome"},
+  {"id":"target","type":"string","label":"Bullseye tag","default":"OUTCOME"},
+  {"id":"toolLabel","type":"string","label":"Tool label","default":"AI = JUST THE TOOL"},
+  {"id":"tools","type":"string","label":"3 tool logos name|hex","default":"openai|412991;claude|D97757;googlegemini|8E75B2"},
+  {"id":"logos","type":"string","label":"Logos that come and go name|hex","default":"openai|412991;claude|D97757;googlegemini|8E75B2;perplexity|1FB8CD;notion|000000;githubcopilot|000000;huggingface|E0A800;meta|0467DF;n8n|EA4B71;zapier|FF4F00;anthropic|191919"},
+  {"id":"cx","type":"number","label":"Open from x (head)","default":960},
+  {"id":"cy","type":"number","label":"Open from y (head)","default":330},
+  {"id":"outcomeAt","type":"number","label":"Switch to outcome (s, local)","default":3.25},
+  {"id":"toolAt","type":"number","label":"Target moves left, tools pop (s, local)","default":5.7},
+  {"id":"pathAt","type":"number","label":"Path from tools to target (s, local)","default":7.05},
+  {"id":"bg","type":"color","label":"Background","default":"#f4f1ea"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · tools-outcome · TAKEOVER. Opens as a circle from the head. Part 1: a grid of AI tool logos pops in and drops out ("come and go", day counter ticking). Part 2: they sweep away, a centred bullseye "OUTCOME" takes an arrow. Part 3: the target slides left, 3 tools pop on the right with an arrow label "AI = just the tool", a dotted path leads them to the target. Length ~8.3s. All content above y 880 (captions). -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vt-bg { position: absolute; inset: 0; }
+        .vt-h { position: absolute; top: 100px; left: 0; right: 0; text-align: center; font-size: 96px; color: var(--vibe-ink); white-space: nowrap; }
+        .vt-day { position: absolute; top: 250px; left: 860px; width: 200px; text-align: center; background: var(--vibe-ink); color: #fff; font: 700 30px "VibePixel"; padding: 10px 0; border-radius: 10px; }
+        .vlogo { position: absolute; left: 0; top: 0; width: 140px; height: 140px; border-radius: 50%; background: #fff; box-shadow: 0 10px 26px rgba(0,0,0,.2); display: grid; place-items: center; }
+        .vlogo i { width: 78px; height: 78px; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; background: var(--c); }
+        .vlogo b { position: absolute; top: -16px; right: -24px; background: var(--vibe-coral); color: #fff; font: 700 20px "VibePixel"; padding: 5px 9px; border-radius: 8px; }
+        .vt-tg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+        .vt-target { position: absolute; left: 700px; top: 280px; width: 520px; height: 520px; }
+        .vt-tag { position: absolute; left: 960px; top: 812px; transform: translateX(-50%); background: var(--vibe-ink); color: #fff; font: 700 30px "VibePixel"; padding: 10px 18px; border-radius: 10px; white-space: nowrap; }
+        .vt-tl { position: absolute; left: 1400px; top: 330px; transform: translateX(-50%); background: var(--vibe-ink); color: #fff; font: 700 30px "VibePixel"; padding: 12px 20px; border-radius: 10px; white-space: nowrap; }
+        .vt-svg { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; overflow: visible; }
+      </style>
+      <div id="root" data-composition-id="vibe-tools-outcome" data-width="1920" data-height="1080">
+        <div class="vt-bg"></div>
+        <div class="vt-h vt-ha"><span class="v-heavy vt-a1"></span> <span class="v-sel v-tight"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vt-a2"></span></span></div>
+        <div class="vt-h vt-hb"><span class="v-serif vt-b1"></span> <span class="v-sel v-tight"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vt-b2"></span></span></div>
+        <div class="vt-day">DAY 1</div>
+        <svg class="vt-svg vt-path" viewBox="0 0 1920 1080"><path class="vt-dots" d="M1180,640 C1060,760 900,720 800,600" fill="none" stroke="#fc6467" stroke-width="8" stroke-linecap="round" stroke-dasharray="2 24" /></svg>
+        <div class="vt-tg">
+          <svg class="vt-target" viewBox="0 0 600 600">
+            <circle cx="300" cy="300" r="280" fill="#111" /><circle cx="300" cy="300" r="215" fill="#f4f1ea" />
+            <circle cx="300" cy="300" r="150" fill="#fc6467" /><circle cx="300" cy="300" r="85" fill="#f4f1ea" /><circle cx="300" cy="300" r="34" fill="#111" />
+            <g class="vt-arrow"><line x1="300" y1="300" x2="560" y2="40" stroke="#111" stroke-width="12" stroke-linecap="round" /><path d="M560,40 l-10,52 l-42,-42 z" fill="#fc6467" /><circle cx="300" cy="300" r="10" fill="#111" /></g>
+          </svg>
+          <div class="vt-tag"></div>
+        </div>
+        <div class="vt-tl"></div>
+        <svg class="vt-svg vt-ptr" viewBox="0 0 1920 1080"><path class="vt-ptrl" d="M1470,395 C1520,440 1500,480 1440,505" fill="none" stroke="#fc6467" stroke-width="9" stroke-linecap="round" /><path class="vt-ptrh" d="M1440,505 l34,-30 l8,40 z" fill="#fc6467" /></svg>
+        <audio id="vt-w0" src="assets/vibe/sfx/whoosh.wav" data-start="0" data-duration="0.57" data-volume="0.6"></audio>
+        <audio id="vt-w1" src="assets/vibe/sfx/whoosh.wav" data-start="3.12" data-duration="0.57" data-volume="0.6"></audio>
+        <audio id="vt-hit" src="assets/vibe/sfx/impact-bass-1.wav" data-start="3.91" data-duration="1.2" data-volume="0.3"></audio>
+        <audio id="vt-w2" src="assets/vibe/sfx/whoosh-short.wav" data-start="5.56" data-duration="0.57" data-volume="0.5"></audio>
+        <audio id="vt-p5" src="assets/vibe/sfx/pop.wav" data-start="5.88" data-duration="0.72" data-volume="0.55"></audio>
+        <audio id="vt-c1" src="assets/vibe/sfx/click-soft.wav" data-start="6.3" data-duration="0.37" data-volume="0.9"></audio>
+        <audio id="vt-w3" src="assets/vibe/sfx/whoosh-short.wav" data-start="6.9" data-duration="0.57" data-volume="0.4"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-tools-outcome"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host;
+          const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+          $(".vt-bg").style.background = v.bg;
+          $(".vt-a1").textContent = v.a1; $(".vt-a2").textContent = v.a2; $(".vt-b1").textContent = v.b1; $(".vt-b2").textContent = v.b2;
+          $(".vt-tag").textContent = v.target; $(".vt-tl").textContent = v.toolLabel;
+          const chip = (n, h, badge) => { const c = document.createElement("div"); c.className = "vlogo"; const i = document.createElement("i"); i.style.setProperty("--m", 'url("assets/logos/' + n + '.svg")'); i.style.setProperty("--c", "#" + h); c.appendChild(i); if (badge) { const b = document.createElement("b"); b.textContent = badge; c.appendChild(b); } root.appendChild(c); return c; };
+          const L = v.logos.split(";").map((s) => s.split("|"));
+          const OA = v.outcomeAt, TA = v.toolAt, PA = v.pathAt;
+          const tl = gsap.timeline({ paused: true });
+          // open as a circle from the head
+          tl.fromTo(root, { clipPath: "circle(0px at " + v.cx + "px " + v.cy + "px)" }, { clipPath: "circle(2300px at " + v.cx + "px " + v.cy + "px)", duration: 0.4, ease: "power2.inOut" }, 0)
+            .fromTo($$(".vt-ha > *"), { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "back.out(1.6)", stagger: 0.08 }, 0.25)
+            .fromTo($(".vt-ha .v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25 }, 0.55)
+            .set($$(".vt-hb > *"), { opacity: 0 }, 0)
+            .fromTo($(".vt-day"), { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2.5)" }, 0.5);
+          // day counter ticks through "every single day"
+          const day = { d: 1 }; const showDay = () => { $(".vt-day").textContent = "DAY " + Math.round(day.d); };
+          tl.to(day, { d: 365, duration: OA - 0.9, ease: "power2.in", onUpdate: showDay }, 0.6);
+          // part 1: grid of tools, three waves; each wave greys and drops, the next pops in
+          const cols = [490, 690, 890, 1090, 1290], rows = [400, 610];
+          const waves = [[0.15, 1.3], [1.4, 2.3], [2.4, OA]];
+          let n = 0;
+          waves.forEach(([tin, tout], w) => {
+            for (let r = 0; r < 2; r++) for (let c = 0; c < 5; c++) {
+              const [name, hex] = L[n++ % L.length];
+              const el = chip(name, hex, w > 0 && (c + r) % 3 === 0 ? "NEW" : "");
+              const k = r * 5 + c, a = tin + ((k * 7) % 10) * 0.04;
+              tl.fromTo(el, { x: cols[c], y: rows[r], scale: 0, opacity: 1, filter: "grayscale(0)" }, { scale: 1, duration: 0.25, ease: "back.out(2.5)", immediateRender: true }, a);
+              if (w < 2) {
+                const o = tout - 0.15 + ((k * 3) % 10) * 0.03;
+                tl.to(el, { filter: "grayscale(1)", opacity: 0.45, duration: 0.12 }, o).to(el, { y: "+=140", scale: 0.3, opacity: 0, duration: 0.25, ease: "power3.in" }, o + 0.1);
+              } else {
+                tl.to(el, { x: 960 - 70 + (c - 2) * 600, y: k < 5 ? -300 : 1300, rotation: (c - 2) * 30, duration: 0.35, ease: "power3.in" }, OA + ((k * 3) % 10) * 0.015);
+              }
+            }
+          });
+          // part 2: sweep, centred bullseye takes the arrow
+          tl.to($(".vt-day"), { scale: 0, opacity: 0, duration: 0.2, ease: "power3.in" }, OA)
+            .to($$(".vt-ha > *"), { y: -60, opacity: 0, duration: 0.2, ease: "power3.in", stagger: 0.05 }, OA)
+            .fromTo($$(".vt-hb > *"), { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "back.out(1.6)", stagger: 0.08 }, OA + 0.2)
+            .fromTo($(".vt-hb .v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25 }, OA + 0.75)
+            .fromTo($(".vt-target"), { scale: 0.3, opacity: 0, rotation: -30 }, { scale: 1, opacity: 1, rotation: 0, duration: 0.45, ease: "back.out(1.6)", immediateRender: true }, OA + 0.3)
+            .fromTo($(".vt-arrow"), { x: 700, y: -500, opacity: 0 }, { x: 0, y: 0, opacity: 1, duration: 0.3, ease: "power4.in", immediateRender: true }, OA + 0.75)
+            .to($(".vt-target"), { scale: 0.95, duration: 0.07, yoyo: true, repeat: 1 }, OA + 1.05)
+            .fromTo($(".vt-tag"), { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(2.5)", immediateRender: true }, OA + 1.15);
+          // part 3: target slides left, tools pop on the right with the arrow label
+          tl.to($(".vt-tg"), { x: -430, duration: 0.45, ease: "power3.inOut" }, TA);
+          const tools = v.tools.split(";").slice(0, 3).map((s, k) => { const [nm, hx] = s.split("|"); const el = chip(nm, hx, ""); gsap.set(el, { x: 1190 + k * 160, y: 540, scale: 0 }); return el; });
+          tl.fromTo(tools, { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2.5)", stagger: 0.1, immediateRender: true }, TA + 0.3)
+            .fromTo($(".vt-tl"), { scale: 0.6, opacity: 0, y: -30 }, { scale: 1, opacity: 1, y: 0, duration: 0.3, ease: "back.out(2.5)", immediateRender: true }, TA + 0.55)
+            .fromTo($(".vt-ptrl"), { attr: { "stroke-dasharray": "200 200", "stroke-dashoffset": 200 } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.3, ease: "power2.out", immediateRender: true }, TA + 0.7)
+            .fromTo($(".vt-ptrh"), { opacity: 0, scale: 0, svgOrigin: "1440 505" }, { opacity: 1, scale: 1, svgOrigin: "1440 505", duration: 0.2, ease: "back.out(3)", immediateRender: true }, TA + 0.95)
+            .fromTo($(".vt-dots"), { attr: { "stroke-dashoffset": 700 }, opacity: 0 }, { attr: { "stroke-dashoffset": 0 }, opacity: 1, duration: 0.8, ease: "power2.out", immediateRender: true }, PA);
+          window.__timelines["vibe-tools-outcome"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

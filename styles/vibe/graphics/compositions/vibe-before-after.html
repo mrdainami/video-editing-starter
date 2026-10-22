@@ -1,0 +1,92 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"leftLabel","type":"string","label":"Before label","default":"TOTAL BEGINNER"},
+  {"id":"leftLine","type":"string","label":"Before chat line","default":"wait… what even is AI?"},
+  {"id":"rightLabel","type":"string","label":"After label","default":"AI SOLUTIONS"},
+  {"id":"leftAt","type":"number","label":"Before card time (s, local)","default":0.6},
+  {"id":"rightAt","type":"number","label":"After card time (s, local)","default":3.2}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · before-after · WITH ME, mirrored. Left: confused beginner chat with a bouncing "?". Right: an AI agent network that builds itself. Length ~6.3s. -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vba-card { position: absolute; top: 100px; width: 480px; height: 360px; border-radius: 26px; background: rgba(242,242,240,.96); box-shadow: 0 18px 50px rgba(0,0,0,.2); padding: 24px 30px; color: var(--vibe-ink); overflow: hidden; }
+        .vba-l { left: 110px; } .vba-r { right: 110px; }
+        .vba-lab { font: 700 26px "VibePixel"; }
+        .vba-bub { position: absolute; left: 30px; top: 110px; max-width: 300px; background: #fff; border-radius: 22px 22px 22px 6px; padding: 18px 22px; font: 600 28px/1.25 "VibeTight"; color: #333; box-shadow: 0 4px 14px rgba(0,0,0,.08); }
+        .vba-q { position: absolute; right: 40px; top: 100px; font: 400 170px/1 "VibeHeavy"; color: #c9c6bf; }
+        .vba-net { position: absolute; left: 20px; top: 62px; width: 440px; height: 280px; }
+        .vba-net line { stroke: var(--vibe-coral); stroke-width: 5; stroke-linecap: round; }
+        .vba-net .n circle { fill: #fff; stroke: #111; stroke-width: 4; }
+        .vba-net .n text { font: 700 18px "VibePixel"; fill: #111; text-anchor: middle; dominant-baseline: central; }
+        .vba-net .hub circle { fill: var(--vibe-coral); stroke: #111; }
+        .vba-net .hub text { fill: #111; font-size: 20px; }
+      </style>
+      <div id="root" data-composition-id="vibe-before-after" data-width="1920" data-height="1080">
+        <div class="vba-card vba-l"><div class="vba-lab vba-ll"></div><div class="vba-bub"></div><div class="vba-q">?</div></div>
+        <div class="vba-card vba-r"><div class="vba-lab vba-rl"></div>
+          <svg class="vba-net" viewBox="0 0 440 280">
+            <g class="lines"><line x1="220" y1="150" x2="70" y2="70" /><line x1="220" y1="150" x2="370" y2="70" /><line x1="220" y1="150" x2="60" y2="225" /><line x1="220" y1="150" x2="380" y2="225" /><line x1="220" y1="150" x2="220" y2="40" /><line x1="70" y1="70" x2="220" y2="40" /><line x1="370" y1="70" x2="380" y2="225" /></g>
+            <g class="n hub"><circle cx="220" cy="150" r="48" /><text x="220" y="150">AGENT</text></g>
+            <g class="n"><circle cx="70" cy="70" r="34" /><text x="70" y="70">DOCS</text></g>
+            <g class="n"><circle cx="370" cy="70" r="34" /><text x="370" y="70">CRM</text></g>
+            <g class="n"><circle cx="60" cy="225" r="34" /><text x="60" y="225">MAIL</text></g>
+            <g class="n"><circle cx="380" cy="225" r="34" /><text x="380" y="225">DATA</text></g>
+            <g class="n"><circle cx="220" cy="40" r="30" /><text x="220" y="40">API</text></g>
+          </svg></div>
+        <audio id="vba-pop1" src="assets/vibe/sfx/pop.wav" data-start="0.52" data-duration="0.72" data-volume="0.6"></audio>
+        <audio id="vba-pop2" src="assets/vibe/sfx/pop.wav" data-start="3.12" data-duration="0.72" data-volume="0.6"></audio>
+        <audio id="vba-build" src="assets/vibe/sfx/stat-slide-count.wav" data-start="3.35" data-duration="1.6" data-volume="0.55"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-before-after"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host;
+          const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+          $(".vba-ll").textContent = v.leftLabel; $(".vba-bub").textContent = v.leftLine; $(".vba-rl").textContent = v.rightLabel;
+          const L = v.leftAt, R = v.rightAt;
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($(".vba-l"), { x: -140, opacity: 0, rotate: -6 }, { x: 0, opacity: 1, rotate: 0, duration: 0.5, ease: "back.out(1.6)" }, L)
+            .fromTo($(".vba-bub"), { scale: 0.6, opacity: 0, transformOrigin: "0% 100%" }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, L + 0.35)
+            .fromTo($(".vba-q"), { y: -40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "bounce.out" }, L + 0.6)
+            .to($(".vba-q"), { rotate: 12, duration: 0.25, yoyo: true, repeat: 5, ease: "sine.inOut" }, L + 1.0)
+            .fromTo($(".vba-r"), { x: 140, opacity: 0, rotate: 6 }, { x: 0, opacity: 1, rotate: 0, duration: 0.5, ease: "back.out(1.6)" }, R)
+            .fromTo($$(".vba-net .n"), { scale: 0, transformOrigin: "50% 50%" }, { scale: 1, duration: 0.3, ease: "back.out(2.5)", stagger: 0.12 }, R + 0.3)
+            .fromTo($$(".vba-net line"), { attr: { "stroke-dasharray": "0 400" } }, { attr: { "stroke-dasharray": "400 0" }, duration: 0.5, ease: "power2.out", stagger: 0.08 }, R + 0.55)
+            .to($(".vba-l"), { x: -140, opacity: 0, duration: 0.35, ease: "power3.in" }, R + 2.7)
+            .to($(".vba-r"), { x: 140, opacity: 0, duration: 0.35, ease: "power3.in" }, R + 2.7);
+          window.__timelines["vibe-before-after"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

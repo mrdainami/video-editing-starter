@@ -1,43 +1,27 @@
-# Edit your first video
+# Start here
 
-## 1. Open this folder
+Open this whole folder in **Claude Code**, **Codex** or **Cursor** (an agent that can run commands on your computer). Then type the commands below. You can also just say them in plain words.
 
-Open the whole folder in Codex, Claude Code or another local agent with file, terminal and MCP access. Keep it somewhere permanent so its tool connections keep working.
+| Step | Type | What happens |
+| --- | --- | --- |
+| 1 | `/setup` | A checklist of what's ready. It walks you through each missing step, with the link or command, until everything is ✅. |
+| 2 | `/brand` (optional) | Add your logo, colours, fonts and tone. Saved for every video. |
+| 3 | `/new-video` | Open your recording in Borumi first. Makes a folder for the video and does the first cut. |
+| 4 | `/styles` | See your graphics styles. `vibe` comes ready to use. |
+| 5 | `/new-style` (optional) | Design your own style from references you like. |
+| 6 | `/add-graphics` | "Add my vibe graphics to this video." Plan → still frames → moving preview → into Borumi. |
+| 7 | `/add-music` | A music bed under your voice. |
+| 8 | Export | "Export the approved video." Saved in `videos/<name>/exports/`. |
 
-## 2. Set up the tools
+Also: `/first-cut` re-cuts a video, `/b-roll` makes generated scenes (needs KIE).
 
-Tell your agent:
+**Where things are**
 
-> Read AGENTS.md and run skills/setup-workspace/SKILL.md. Check what I already have, then help me connect Borumi, set up KIE and install HyperFrames.
+- `skills/`: the commands
+- `styles/`: graphics styles (open `styles/vibe/preview.jpg` to see vibe)
+- `brand/`: your brand
+- `sounds/`: your sound library
+- `videos/`: one folder per video
+- `_system/`: setup guides and tools (you don't need to open it)
 
-Open `.env` when asked and fill in your own `KIE_API_KEY`. Your agent can help you find the file. KIE is needed when you want generated B-roll or music.
-
-## 3. Add your brand
-
-> Run skills/setup-brand/SKILL.md. Ask for my existing brand guide, tone and reference materials. If I don't have them, help me choose a starting direction.
-
-Your choices are saved for future videos.
-
-## 4. Start a video
-
-Open your recording in Borumi, then say:
-
-> Create a video project called [name]. Make a first cut of my Borumi project [project name] and show me the result.
-
-The agent creates `videos/<video-name>/` and keeps the edit there.
-
-## 5. Add graphics and B-roll
-
-Review the cut, then say:
-
-> Suggest graphics and B-roll for this video using my brand. Show me the plan before generating them.
-
-Review the previews and ask for changes. Approve the ones you want added to the edit.
-
-## 6. Export
-
-> Export the approved video into this video's exports folder and save its progress.
-
-To continue later:
-
-> Continue [video name]. Read its brief and saved status, check the current Borumi project and resume the next step.
+To continue later: `/new-video` and say "continue <video name>".

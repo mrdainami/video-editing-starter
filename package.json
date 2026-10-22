@@ -1,14 +1,16 @@
 {
   "name": "video-editing-starter",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "engines": {
     "node": ">=22"
   },
   "scripts": {
+    "check": "node _system/scripts/check-ready.mjs",
+    "commands": "node _system/scripts/install-commands.mjs",
     "hf": "hyperframes",
     "doctor": "hyperframes doctor",
-    "check": "node scripts/check-ready.mjs"
+    "style-preview": "node _system/scripts/style-preview.mjs"
   },
   "devDependencies": {
     "hyperframes": "0.8.34"

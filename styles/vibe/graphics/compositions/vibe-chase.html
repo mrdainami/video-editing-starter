@@ -1,0 +1,110 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"h1","type":"string","label":"Heading (serif)","default":"chasing the"},
+  {"id":"h2","type":"string","label":"Heading (selected)","default":"latest AI tool"},
+  {"id":"me","type":"string","label":"Runner label","default":"YOU"},
+  {"id":"bar","type":"string","label":"Progress label","default":"CATCHING UP..."},
+  {"id":"resetAt","type":"number","label":"When the bar drops back (s, local)","default":2.0},
+  {"id":"logos","type":"string","label":"logo|hex ; separated","default":"openai|412991;claude|D97757;googlegemini|8E75B2;perplexity|1FB8CD;n8n|EA4B71;huggingface|E0A800"},
+  {"id":"bg","type":"color","label":"Background","default":"#f2f2f0"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · chase · TAKEOVER. "You" runs along a track after AI tool logos that keep zooming ahead; a "catching up" bar fills, then drops back when a new tool appears. Use between block-wipe cover and reveal. Length ~2.7s. All content above y 880 (captions). -->
+      <style>
+/* vibe style pack: shared tokens, fonts and type collage. Fonts are SIL Open Font License (Google Fonts). */
+@font-face { font-family: "VibeSerif"; src: url("assets/vibe/fonts/instrument-serif-italic.woff2") format("woff2"); font-style: italic; }
+@font-face { font-family: "VibePixel"; src: url("assets/vibe/fonts/silkscreen-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "VibeHeavy"; src: url("assets/vibe/fonts/archivo-black.woff2") format("woff2"); }
+@font-face { font-family: "VibeTight"; src: url("assets/vibe/fonts/inter-tight-var.woff2") format("woff2"); font-weight: 100 900; }
+:root { --vibe-coral: #fc6467; --vibe-coral-deep: #d8403f; --vibe-coral-tint: #ffd6d4; --vibe-paper: #f2f2f0; --vibe-cream: #f4f1ea; --vibe-ink: #111111; }
+.v-heavy { font-family: "VibeHeavy"; letter-spacing: -0.03em; }
+.v-serif { font-family: "VibeSerif"; font-style: italic; font-size: 1.12em; }
+.v-tight { font-family: "VibeTight"; font-weight: 800; letter-spacing: -0.04em; }
+.v-pixel { font-family: "VibePixel"; font-weight: 700; font-size: 0.82em; }
+.v-sel { position: relative; padding: 0 10px; display: inline-block; z-index: 0; }
+.v-sel .v-box { position: absolute; inset: 6px -2px 2px -2px; border-radius: 6px; z-index: -1; transform-origin: left; background: var(--vibe-coral-tint); }
+.v-sel .v-h { position: absolute; width: 4px; height: 118%; top: -4%; background: var(--vibe-coral); }
+.v-sel .v-h::after { content: ""; position: absolute; width: 20px; height: 20px; border-radius: 50%; left: -8px; background: var(--vibe-coral); }
+.v-sel .v-h.l { left: -4px; } .v-sel .v-h.l::after { top: -12px; }
+.v-sel .v-h.r { right: -4px; } .v-sel .v-h.r::after { bottom: -12px; }
+.v-cursor { display: inline-block; width: 7px; height: 0.9em; vertical-align: -0.08em; margin-left: 8px; background: currentColor; }
+.v-folder { position: absolute; width: 150px; height: 112px; border-radius: 11px; background: linear-gradient(180deg, #ff8a8c 0%, #fc6467 100%); box-shadow: 0 10px 24px rgba(120,30,30,.22); }
+.v-folder::before { content: ""; position: absolute; top: -15px; left: 0; width: 40%; height: 26px; border-radius: 9px 9px 0 0; background: #e85457; z-index: -1; }
+.v-badge { position: absolute; top: -16px; right: -16px; width: 54px; height: 54px; border-radius: 50%; background: var(--vibe-ink); color: #fff; font: 700 24px "VibeTight"; display: grid; place-items: center; }
+/* font swap: one cell, one baseline, one width. Sizes measured so each variant matches Inter Tight 800. */
+.v-swap { display: inline-grid; grid-template-rows: 1.05em; align-items: baseline; justify-items: center; }
+.v-swap > span { grid-area: 1 / 1; }
+.v-swap > .s1 { font-size: 0.84em; } .v-swap > .s2 { font-size: 0.51em; } .v-swap > .s3 { font-size: 1.34em; } .v-swap > .final { font-size: 1em; }
+</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vc-bg { position: absolute; inset: 0; }
+        .vc-h { position: absolute; top: 110px; left: 0; right: 0; text-align: center; font-size: 96px; color: var(--vibe-ink); white-space: nowrap; }
+        .vc-track { position: absolute; left: 140px; width: 1640px; top: 610px; height: 0; border-top: 6px dashed rgba(17,17,17,.25); }
+        .vc-me { position: absolute; left: 0; top: 0; width: 170px; height: 170px; border-radius: 50%; background: var(--vibe-coral); color: #fff; display: grid; place-items: center; font: 400 44px "VibeHeavy"; box-shadow: 0 14px 30px rgba(216,64,63,.35); }
+        .vc-lines { position: absolute; right: 170px; top: 40px; width: 120px; }
+        .vc-lines i { display: block; height: 8px; border-radius: 4px; background: rgba(17,17,17,.25); margin: 14px 0 14px auto; }
+        .vlogo { position: absolute; left: 0; top: 0; width: 140px; height: 140px; border-radius: 50%; background: #fff; box-shadow: 0 10px 26px rgba(0,0,0,.2); display: grid; place-items: center; }
+        .vlogo i { width: 78px; height: 78px; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; background: var(--c); }
+        .vlogo b { position: absolute; top: -18px; right: -26px; background: var(--vibe-ink); color: #fff; font: 700 22px "VibePixel"; padding: 6px 10px; border-radius: 8px; }
+        .vc-barw { position: absolute; left: 560px; width: 800px; top: 770px; }
+        .vc-bl { font: 700 30px "VibePixel"; color: var(--vibe-ink); margin-bottom: 14px; display: flex; justify-content: space-between; }
+        .vc-bt { height: 34px; border-radius: 17px; background: rgba(17,17,17,.1); overflow: hidden; }
+        .vc-bf { height: 100%; width: 100%; background: var(--vibe-coral); transform-origin: left; border-radius: 17px; }
+      </style>
+      <div id="root" data-composition-id="vibe-chase" data-width="1920" data-height="1080">
+        <div class="vc-bg"></div>
+        <div class="vc-h"><span class="v-serif vc-1"></span> <span class="v-sel v-tight"><span class="v-box"></span><span class="v-h l"></span><span class="v-h r"></span><span class="vc-2"></span></span></div>
+        <div class="vc-track"></div>
+        <div class="vc-me"><div class="vc-lines"><i style="width:120px"></i><i style="width:80px"></i><i style="width:100px"></i></div><span class="vc-mt"></span></div>
+        <div class="vc-barw"><div class="vc-bl"><span class="vc-blt"></span><span class="vc-pct">0%</span></div><div class="vc-bt"><div class="vc-bf"></div></div></div>
+        <audio id="vc-w1" src="assets/vibe/sfx/whoosh.wav" data-start="0" data-duration="0.57" data-volume="0.55"></audio>
+        <audio id="vc-w2" src="assets/vibe/sfx/whoosh-short.wav" data-start="1.0" data-duration="0.57" data-volume="0.5"></audio>
+        <audio id="vc-w3" src="assets/vibe/sfx/whoosh-short.wav" data-start="1.85" data-duration="0.57" data-volume="0.5"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-chase"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host;
+          const $ = (s) => root.querySelector(s), $$ = (s) => root.querySelectorAll(s);
+          $(".vc-bg").style.background = v.bg; $(".vc-1").textContent = v.h1; $(".vc-2").textContent = v.h2;
+          $(".vc-mt").textContent = v.me; $(".vc-blt").textContent = v.bar;
+          const L = v.logos.split(";").map((s) => s.split("|"));
+          const chips = L.map(([n, h], k) => {
+            const c = document.createElement("div"); c.className = "vlogo";
+            const i = document.createElement("i"); i.style.setProperty("--m", 'url("assets/logos/' + n + '.svg")'); i.style.setProperty("--c", "#" + h);
+            const b = document.createElement("b"); b.textContent = "NEW";
+            c.appendChild(i); c.appendChild(b); root.appendChild(c); return c;
+          });
+          const Y = 540, R = v.resetAt;
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo($$(".vc-h > *"), { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "back.out(1.6)", stagger: 0.08 }, 0.05)
+            .fromTo($(".v-box"), { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, 0.55)
+            .fromTo($(".vc-track"), { scaleX: 0, transformOrigin: "left" }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 0)
+            // the runner keeps moving but never gets close
+            .fromTo($(".vc-me"), { x: -200, y: Y - 15 }, { x: 640, duration: 2.6, ease: "power1.out" }, 0)
+            .to($(".vc-me"), { y: Y - 45, duration: 0.16, ease: "sine.inOut", yoyo: true, repeat: 15 }, 0.1);
+          // each tool pops in ahead of the runner, then zooms off right; a new one takes its place
+          const slots = [[0.2, 1160], [0.5, 1440], [1.45, 1240], [1.6, 1520], [1.75, 1100], [2.05, 1380]];
+          chips.forEach((c, k) => {
+            const [t, x] = slots[k % slots.length];
+            const out = k < 2 ? 1.0 + k * 0.08 : k < 4 ? 1.85 + (k - 2) * 0.08 : 9;
+            tl.fromTo(c, { x: x, y: Y - 120 + (k % 2) * 70, scale: 0, opacity: 1 }, { scale: 1, duration: 0.3, ease: "back.out(2.5)", immediateRender: true }, t);
+            if (out < 9) tl.to(c, { x: 2200, rotation: 25, duration: 0.4, ease: "power3.in" }, out);
+          });
+          // catching-up bar: fills, then drops when the new tools land
+          const pct = { p: 0 }; const show = () => { $(".vc-pct").textContent = Math.round(pct.p) + "%"; gsap.set($(".vc-bf"), { scaleX: pct.p / 100 }); };
+          show();
+          tl.fromTo($(".vc-barw"), { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(2)" }, 0.3)
+            .to(pct, { p: 88, duration: R - 0.5, ease: "power1.out", onUpdate: show }, 0.4)
+            .to(pct, { p: 31, duration: 0.25, ease: "power3.in", onUpdate: show }, R)
+            .to(pct, { p: 52, duration: 0.6, ease: "power1.out", onUpdate: show }, R + 0.3);
+          window.__timelines["vibe-chase"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

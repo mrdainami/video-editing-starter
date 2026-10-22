@@ -5,13 +5,52 @@ node_modules/
 .DS_Store
 .mcp.json
 .codex/
-.claude/
-.agents/
 .cache/
+dist/
+!_system/tools/kie-mcp/dist/
+!_system/tools/kie-mcp/dist/index.js
+
+# Agent folders: only the pre-installed / commands are shared
+.claude/*
+!.claude/skills/
+.agents/*
+!.agents/skills/
+
+# Your own videos, brand files and styles stay out of the shared starter
 videos/*
 !videos/.gitkeep
 brand/assets/*
 !brand/assets/.gitkeep
-dist/
-!tools/kie-mcp/dist/
-!tools/kie-mcp/dist/index.js
+styles/*
+!styles/README.md
+!styles/_blank/
+!styles/vibe/
+sounds/bgm/*
+sounds/sfx/*
+!sounds/bgm/.gitkeep
+!sounds/sfx/.gitkeep
+
+# vibe demo: share the finished video, not the working media
+styles/vibe/demo-project/assets/clips/
+styles/vibe/demo-project/assets/presenter.png
+
+# HyperFrames working folders
+.hyperframes/
+.*.hf-transaction-*/
+.thumbnails/
+.transcode-cache/
+.waveform-cache/
+snapshots/
+work-*/
+
+# Pixabay sounds: fetched by styles/vibe/graphics/get-sounds.sh, not shared
+styles/vibe/graphics/assets/vibe/sfx/pop.wav
+styles/vibe/graphics/assets/vibe/sfx/whoosh.wav
+styles/vibe/graphics/assets/vibe/sfx/whoosh-short.wav
+styles/vibe/graphics/assets/vibe/sfx/click-soft.wav
+styles/vibe/graphics/assets/vibe/sfx/impact-bass-1.wav
+styles/vibe/sounds/pop.wav
+styles/vibe/sounds/whoosh.wav
+styles/vibe/sounds/whoosh-short.wav
+styles/vibe/sounds/click-soft.wav
+styles/vibe/sounds/impact-bass-1.wav

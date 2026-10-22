@@ -1,0 +1,55 @@
+<!doctype html>
+<html data-composition-variables='[
+  {"id":"question","type":"string","label":"Card label","default":"HOW HARD IS AI?"},
+  {"id":"from","type":"string","label":"Start label (right end)","default":"HARD"},
+  {"id":"to","type":"string","label":"End label (left end)","default":"EASY"},
+  {"id":"swingAt","type":"number","label":"Needle swing time (s, local)","default":0.75},
+  {"id":"outAt","type":"number","label":"Card leaves (s, local; 0 = swing + 0.95)","default":0},
+  {"id":"side","type":"string","label":"right or left top zone","default":"right"}
+]'>
+  <head><meta charset="UTF-8" /></head>
+  <body>
+    <template>
+      <!-- vibe · gauge · WITH ME. A difficulty gauge card; the needle swings from one end to the other on the cue word. Length ~1.8s. -->
+      <style>/*VIBE_CSS*/</style>
+      <style>
+        #root { position: absolute; inset: 0; }
+        .vg-card { position: absolute; top: 110px; width: 480px; height: 340px; border-radius: 26px; background: rgba(242,242,240,.96); box-shadow: 0 18px 50px rgba(0,0,0,.2); padding: 26px 32px; color: var(--vibe-ink); }
+        .vg-q { font: 700 26px "VibePixel"; }
+        .vg-svg { position: absolute; left: 40px; top: 70px; width: 400px; height: 230px; }
+        .vg-lab { position: absolute; bottom: 26px; font: 700 26px "VibeTight"; }
+        .vg-lab.l { left: 34px; color: var(--vibe-coral-deep); } .vg-lab.r { right: 34px; color: #555; }
+      </style>
+      <div id="root" data-composition-id="vibe-gauge" data-width="1920" data-height="1080">
+        <div class="vg-card">
+          <div class="vg-q"></div>
+          <svg class="vg-svg" viewBox="0 0 400 230">
+            <path d="M40,200 A160,160 0 0 1 360,200" fill="none" stroke="#e1ded7" stroke-width="34" stroke-linecap="round" />
+            <path class="vg-easy" d="M40,200 A160,160 0 0 1 120,61.4" fill="none" stroke="#fc6467" stroke-width="34" stroke-linecap="round" />
+            <g class="vg-needle"><line x1="200" y1="200" x2="200" y2="62" stroke="#111" stroke-width="10" stroke-linecap="round" /><circle cx="200" cy="200" r="18" fill="#111" /></g>
+          </svg>
+          <div class="vg-lab l"></div><div class="vg-lab r"></div>
+        </div>
+        <audio id="vg-pop" src="assets/vibe/sfx/pop.wav" data-start="0.17" data-duration="0.72" data-volume="0.6"></audio>
+        <audio id="vg-click" src="assets/vibe/sfx/select-click.wav" data-start="0.42" data-duration="0.3" data-volume="0.7"></audio>
+      </div>
+      <script>
+        (() => {
+          const v = window.__hyperframes.getVariables();
+          const host = document.querySelector('[data-composition-id="vibe-gauge"]');
+          const root = host.querySelector('[data-hf-inner-root]') || host.querySelector('#root') || host;
+          const $ = (s) => root.querySelector(s);
+          $(".vg-q").textContent = v.question; $(".vg-lab.l").textContent = v.to; $(".vg-lab.r").textContent = v.from;
+          const card = $(".vg-card"); if (v.side === "left") card.style.left = "110px"; else card.style.right = "110px";
+          const tl = gsap.timeline({ paused: true });
+          tl.set($(".vg-needle"), { svgOrigin: "200 200", rotation: 70 }, 0)
+            .fromTo(card, { y: -40, opacity: 0, scale: 0.9 }, { y: 0, opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)" }, 0.05)
+            .fromTo($(".vg-easy"), { opacity: 0 }, { opacity: 1, duration: 0.2 }, v.swingAt + 0.2)
+            .to($(".vg-needle"), { rotation: -62, svgOrigin: "200 200", duration: 0.5, ease: "back.out(2.5)" }, v.swingAt)
+            .to(card, { y: -40, opacity: 0, scale: 0.9, duration: 0.3, ease: "power3.in" }, (v.outAt || v.swingAt + 0.95));
+          window.__timelines["vibe-gauge"] = tl;
+        })();
+      </script>
+    </template>
+  </body>
+</html>

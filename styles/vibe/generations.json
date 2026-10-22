@@ -1,0 +1,80 @@
+[
+ {
+  "cue": "side-pop",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "storm-flutter",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "title-whoosh",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "swap-glitch",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "select-click",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "stat-slide-count",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "behind-thud",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "lowerthird-snap",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "block-wipe",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "folder-open-fan",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "window-swoosh-pop",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "mockup-thump-swoosh",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ },
+ {
+  "cue": "ring-iris-shutter",
+  "provider": "kie",
+  "model": "ai-music-api/sounds V6",
+  "state": "success"
+ }
+]
