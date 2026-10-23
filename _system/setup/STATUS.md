@@ -1,10 +1,11 @@
 # Setup status
 
-- Agent and platform: not checked
+- Agent: not checked
 - Node.js: not checked
-- HyperFrames CLI and skills: not checked
-- HyperFrames rendering runtime: not checked
-- Borumi connection and project: not checked
-- KIE connection and authentication: optional, not checked
+- HyperFrames program, FFmpeg, Chrome, skills: not checked
+- Borumi app and MCP: not checked
+- KIE key: not checked
+- Connected to agent (npm run connect): no
+- Restarted and tools confirmed in chat: no
 - Brand and tone: not configured
-- Next step: run skills/setup/SKILL.md
+- Next step: type /setup
