@@ -1,21 +1,38 @@
 # Connect KIE
 
-1. Create your account at [KIE](https://kie.ai?ref=41abfa41934c4f15a97d88d2d4f8162a) and get your API key.
-2. Open root `.env` and enter the key after `KIE_API_KEY=`. If the file is absent, create it from `.env.example`. Keep existing values when resuming.
-3. Have your agent register this local MCP process using this machine's actual absolute paths:
+KIE makes generated B-roll, music and sound effects. It costs credits per job. Setup only checks your balance; it never generates anything.
+
+KIE is the **last** setup step and can be skipped. Borumi is connected and checked first.
+
+## Steps
+
+1. **Make an account** at [KIE](https://kie.ai?ref=41abfa41934c4f15a97d88d2d4f8162a).
+2. **Create a key** at [kie.ai/api-key](https://kie.ai/api-key) and copy it.
+3. **Paste it into `.env`** in this folder, right after `KIE_API_KEY=`, with no spaces. Save. The agent opens the file for you (Mac: `open -e .env`, Windows: `notepad .env`), because files starting with a dot are hidden.
+4. **Connect it to your agent:** the agent runs `npm run connect` again (it was run once for Borumi; running it again adds KIE).
+5. **Restart the agent** in this folder.
+6. **Check:** the agent reads your credit balance with the KIE tools. A new account may show 0 credits: the key works, but add credits on kie.ai before generating.
+
+`npm run check` tests the key for real against KIE's free balance endpoint (`GET https://api.kie.ai/api/v1/chat/credit`).
+
+## How the connection works
+
+`npm run connect` registers this launcher, using this computer's real paths:
 
 ```text
 Name: kie
-Transport: stdio
-Command: /absolute/path/to/node
-Arguments: /absolute/path/to/video-editing-starter/_system/scripts/start-kie.mjs
+Command: <full path to node>
+Argument: <this folder>/_system/scripts/start-kie.mjs
 ```
 
-The launcher reads this folder's `.env`, uses its `KIE_API_KEY` rather than an inherited key, sets the workspace directory, and starts the bundled connector. The registration contains the launcher path, not your key.
+The launcher reads the key from this folder's `.env` each time it starts, and starts the bundled connector in `_system/tools/kie-mcp`. The key is never copied into agent settings. If you move this folder, run `npm run connect` again.
 
-4. Reconnect the agent. Discover the KIE tools, then use the documented account-credit GET endpoint to verify authentication without generating. Report success or the error, with credentials redacted.
-5. Before generation, read the selected model's current documentation, confirm settings and price, and save each returned task ID in the selected video's `project/generations.json`.
+## Skip it
 
-The bundled connector is self-contained and does not require a separate install. Use Node.js 22+. Keep the workspace in the same location, or update the launcher path after moving it.
+Say "skip KIE" during setup. The agent adds `KIE_SETUP=skipped` to `.env`. Remove that line and add a key whenever you want it.
+
+## Before generating
+
+Read the chosen model's current documentation, confirm settings and price with the user, and save each returned task ID in the video's `project/generations.json`.
 
 [Connector](https://github.com/mrdainami/kie-mcp) · [API documentation](https://docs.kie.ai/)

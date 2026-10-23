@@ -8,7 +8,7 @@ Each command is a skill in `skills/<name>/SKILL.md`. In Claude Code, Codex and C
 
 | Command | Plain words that mean it | What it does |
 | --- | --- | --- |
-| `/setup` | "set up", "setup", "install", "connect" | Checklist loop until everything is ready |
+| `/setup` | "set up", "setup", "install", "connect", "set up Borumi", "connect KIE", "set up HyperFrames" | Live checklist from zero: installs what it can, walks the user through the rest, connects Borumi and KIE, proves they work |
 | `/brand` | "my brand", "colours", "logo", "fonts", "tone" | Save brand, logo, colours, fonts, tone |
 | `/new-video` | "new video", "start a video", "continue <video>" | Make or reopen `videos/<name>/`, then the first cut |
 | `/first-cut` | "first cut", "cut this", "remove repeats" | Cut repeats, false starts and pauses in Borumi |
@@ -24,6 +24,7 @@ Full edit order and finishing: `_system/recipes/edit-video.md` and the installed
 
 - `skills/`: the commands. `styles/`: graphics styles (`vibe/` example, `_blank/` start). `brand/`: the user's brand. `sounds/`: their sound library. `videos/`: one folder per video.
 - `_system/`: setup guides, video template, recipes, scripts and the KIE connector. Users don't need to open it.
+- Setup commands: `npm run check` (live checklist) and `npm run connect` (connects Borumi and KIE for Claude Code, Codex and Cursor inside this folder).
 
 ## One folder per edit
 

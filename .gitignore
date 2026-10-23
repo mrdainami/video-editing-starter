@@ -5,6 +5,8 @@ node_modules/
 .DS_Store
 .mcp.json
 .codex/
+.cursor/
+skills-lock.json
 .cache/
 dist/
 !_system/tools/kie-mcp/dist/

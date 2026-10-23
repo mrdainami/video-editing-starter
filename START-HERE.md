@@ -2,9 +2,11 @@
 
 Open this whole folder in **Claude Code**, **Codex** or **Cursor** (an agent that can run commands on your computer). Then type the commands below. You can also just say them in plain words.
 
+Never installed anything? That's fine. Type `/setup` and it tells you exactly what to do. If it says Node.js is missing, install the LTS version from [nodejs.org](https://nodejs.org/en/download), reopen your agent here, and type `/setup` again.
+
 | Step | Type | What happens |
 | --- | --- | --- |
-| 1 | `/setup` | A checklist of what's ready. It walks you through each missing step, with the link or command, until everything is ✅. |
+| 1 | `/setup` | Starts from nothing. The agent installs what it can, opens each page or app you need, connects Borumi and KIE, and checks they really work. You restart the agent after installing Node, after connecting Borumi, and after KIE (KIE is last and optional). |
 | 2 | `/brand` (optional) | Add your logo, colours, fonts and tone. Saved for every video. |
 | 3 | `/new-video` | Open your recording in Borumi first. Makes a folder for the video and does the first cut. |
 | 4 | `/styles` | See your graphics styles. `vibe` comes ready to use. |
